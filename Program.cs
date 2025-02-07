@@ -1,3 +1,4 @@
+using System.Collections;
 using Microsoft.Data.Sqlite;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,11 +13,44 @@ string SECRET_KEY = "development key";
 
 SqliteConnection connect_db() {
     /* Returns a new connection to the database. */
-    return new SqliteConnection("Data source=" + DATABASE);
+    SqliteConnection connection = new SqliteConnection("Data source=" + DATABASE);
+    connection.Open();
+    return connection;
 }
 
-void query_db(string query, bool one=false) {
+List<Dictionary<string, string>> query_db(string query, SqliteParameter[]? args = null, bool one=false) {
     /* Queries the database and returns a list of dictionaries. */
+    SqliteConnection connection = connect_db();
+    var command = connection.CreateCommand();
+    command.CommandText = query;
+    
+    if (args is not null)
+        command.Parameters.AddRange(args);
+    
+    List<Dictionary<string, string>> list = new List<Dictionary<string, string>>();
+
+    using (var reader = command.ExecuteReader()) {
+        while (reader.Read())
+        {
+            Dictionary<string, string> dict = new Dictionary<string, string>();
+
+            for (int i = 0; i < reader.FieldCount; i++) 
+            {
+                string column_name = reader.GetName(i);
+                string column_value = reader.GetString(i);
+
+                dict.Add(column_name, column_value);
+            }
+
+            list.Add(dict);
+        }
+    }    
+
+    if (one) {
+        return list.GetRange(0,1);
+    } else {
+        return list;
+    }
 }
 
 void get_user_id(string username) {
@@ -36,8 +70,6 @@ void gravatar_url(string email, int size=80) {
 app.MapGet("/", () => {
 
     SqliteConnection connection = connect_db();
-    
-    connection.Open();
 
     var command = connection.CreateCommand();
     command.CommandText =
