@@ -13,6 +13,7 @@ string SECRET_KEY = "development key";
 
 SqliteConnection connect_db() {
     /* Returns a new connection to the database. */
+
     SqliteConnection connection = new SqliteConnection("Data source=" + DATABASE);
     connection.Open();
     return connection;
@@ -20,6 +21,7 @@ SqliteConnection connect_db() {
 
 List<Dictionary<string, string>> query_db(string query, SqliteParameter[]? args = null, bool one=false) {
     /* Queries the database and returns a list of dictionaries. */
+    
     SqliteConnection connection = connect_db();
     var command = connection.CreateCommand();
     command.CommandText = query;
@@ -29,7 +31,8 @@ List<Dictionary<string, string>> query_db(string query, SqliteParameter[]? args 
     
     List<Dictionary<string, string>> list = new List<Dictionary<string, string>>();
 
-    using (var reader = command.ExecuteReader()) {
+    using (var reader = command.ExecuteReader()) 
+    {
         while (reader.Read())
         {
             Dictionary<string, string> dict = new Dictionary<string, string>();
@@ -53,8 +56,22 @@ List<Dictionary<string, string>> query_db(string query, SqliteParameter[]? args 
     }
 }
 
-void get_user_id(string username) {
+long? get_user_id(string username) {
     /* Convenience method to look up the id for a username. */
+
+    SqliteConnection connection = connect_db();
+    var command = connection.CreateCommand();
+    command.CommandText = "SELECT user_id FROM user WHERE username = @username";
+    command.Parameters.Add(new SqliteParameter("@username", username));
+
+    long? user_id = null;
+
+    using (var reader = command.ExecuteReader())
+    {
+        user_id = reader.GetInt64(0);
+    }
+
+    return user_id;
 }
 
 string format_datetime(long timestamp) {
