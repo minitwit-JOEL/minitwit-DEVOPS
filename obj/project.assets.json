@@ -332,24 +332,26 @@
     ]
   },
   "packageFolders": {
-    "/home/lukas/.nuget/packages/": {}
+    "C:\\Users\\lukas\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/mnt/c/Users/lukas/Documents/Universitet/DevOps/minitwit-DEVOPS/minitwit.csproj",
+      "projectUniqueName": "C:\\Users\\lukas\\Documents\\Universitet\\DevOps\\minitwit-DEVOPS\\minitwit.csproj",
       "projectName": "minitwit",
-      "projectPath": "/mnt/c/Users/lukas/Documents/Universitet/DevOps/minitwit-DEVOPS/minitwit.csproj",
-      "packagesPath": "/home/lukas/.nuget/packages/",
-      "outputPath": "/mnt/c/Users/lukas/Documents/Universitet/DevOps/minitwit-DEVOPS/obj/",
+      "projectPath": "C:\\Users\\lukas\\Documents\\Universitet\\DevOps\\minitwit-DEVOPS\\minitwit.csproj",
+      "packagesPath": "C:\\Users\\lukas\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\lukas\\Documents\\Universitet\\DevOps\\minitwit-DEVOPS\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/home/lukas/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\lukas\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -392,7 +394,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/8.0.112/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.101/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
