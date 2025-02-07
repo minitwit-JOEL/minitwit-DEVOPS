@@ -1,11 +1,13 @@
-using System.Collections;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.Unicode;
 using Microsoft.Data.Sqlite;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var app = builder.Build();
 
-// configuration
+// Configuration
 string DATABASE = "/tmp/minitwit.db";
 int PER_PAGE = 30;
 bool DEBUG = true;
@@ -80,8 +82,15 @@ string format_datetime(long timestamp) {
     return datetime.ToString("yyyy-mm-dd @ hh:mm");
 }
 
-void gravatar_url(string email, int size=80) {
+string gravatar_url(string email, int size=80) {
     /* Return the gravatar image for the given email address. */
+    UTF8Encoding encode = new UTF8Encoding();
+    MD5 md5 = MD5.Create();
+
+    byte[] hash = md5.ComputeHash(encode.GetBytes(email.Trim().ToLower()));
+    string hexadec = Convert.ToHexString(hash).ToLower();
+
+    return $"http://www.gravatar.com/avatar/{hexadec}?d=identicon&s={size}";
 }
 
 app.MapGet("/", () => {
