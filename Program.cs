@@ -21,6 +21,34 @@ SqliteConnection connect_db() {
     return connection;
 }
 
+void init_db() {
+    /* Creates the database tables. */
+    SqliteConnection connection = connect_db();
+
+    string? schema = null;
+
+    try {
+        // Open the text file using a stream reader.
+        using StreamReader reader = new("schema.sql");
+
+        // Read the stream as a string.
+        schema = reader.ReadToEnd();
+
+    } catch (IOException e) {
+        Console.WriteLine("Could not read from file 'schema.sql. \n Resulted in following error: " + e);
+    }
+
+    if (schema is not null) {
+        using var command = connection.CreateCommand();
+        command.CommandText = schema;
+        command.ExecuteReader();
+    }
+
+    connection.Close();
+}
+
+init_db();
+
 List<Dictionary<string, string>> query_db(string query, SqliteParameter[]? args = null, bool one=false) {
     /* Queries the database and returns a list of dictionaries. */
     
@@ -49,15 +77,15 @@ List<Dictionary<string, string>> query_db(string query, SqliteParameter[]? args 
 
             list.Add(dict);
         }
-    }    
+    }   
+
+    connection.Close(); 
 
     if (one) {
         return list.GetRange(0,1);
     } else {
         return list;
     }
-
-    connection.Close();
 }
 
 long? get_user_id(string username) {
