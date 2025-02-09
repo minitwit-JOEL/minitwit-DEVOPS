@@ -1,12 +1,29 @@
-using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.Sqlite;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options => {
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 
 var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Error");
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
+}
+
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseSession();
 
 // Configuration
 string DATABASE = "/tmp/minitwit.db";
@@ -124,17 +141,17 @@ string gravatar_url(string email, int size=80) {
     return $"http://www.gravatar.com/avatar/{hexadec}?d=identicon&s={size}";
 }
 
-app.MapGet("/", (HttpRequest request, [FromQuery(Name = "offset")] int? offset) => {
+app.MapGet("/", (HttpContext context, HttpRequest request, [FromQuery(Name = "offset")] int? offset) => {
 
     Console.WriteLine(offset);
 
     Console.WriteLine("We got a visitor from: " + 
     request.HttpContext.Connection.RemoteIpAddress);
 
-    // TODO: insert session check and redirect to /public here
+    string? user_id = context.Session.GetString("user_id");
 
-    // TODO: retrieve user_id from session
-    int user_id = 0;
+    if (string.IsNullOrEmpty(user_id))
+        return Results.Redirect("/pulic");
 
     string query =
     @"
@@ -152,18 +169,7 @@ app.MapGet("/", (HttpRequest request, [FromQuery(Name = "offset")] int? offset) 
         new SqliteParameter("@Per_page", PER_PAGE)
     ];
 
-    return query_db(query, parameters);
+    return Results.Json(query_db(query, parameters));
 });
-
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
-}
-
-app.UseHttpsRedirection();
-app.UseStaticFiles();
 
 app.Run();
