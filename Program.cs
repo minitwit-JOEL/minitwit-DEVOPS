@@ -47,8 +47,6 @@ void init_db() {
     connection.Close();
 }
 
-init_db();
-
 List<Dictionary<string, string>> query_db(string query, SqliteParameter[]? args = null, bool one=false) {
     /* Queries the database and returns a list of dictionaries. */
     
