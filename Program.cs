@@ -143,8 +143,6 @@ string gravatar_url(string email, int size=80) {
 
 app.MapGet("/", (HttpContext context, HttpRequest request, [FromQuery(Name = "offset")] int? offset) => {
 
-    Console.WriteLine(offset);
-
     Console.WriteLine("We got a visitor from: " + 
     request.HttpContext.Connection.RemoteIpAddress);
 
@@ -170,6 +168,60 @@ app.MapGet("/", (HttpContext context, HttpRequest request, [FromQuery(Name = "of
     ];
 
     return Results.Json(query_db(query, parameters));
+});
+
+app.MapPost("/login", (
+    HttpContext context, 
+    HttpRequest request,
+    [FromForm] string username,
+    [FromForm] string password) => {
+
+    string? user_id = context.Session.GetString("user_id");
+
+    if (string.IsNullOrEmpty(user_id))
+        return Results.Redirect("/pulic");
+
+    string? error = null;
+
+    string query = "SELECT * FROM user WHERE username = @Username";
+    SqliteParameter[] parameters = [
+        new SqliteParameter("@Username", username), 
+    ];
+    List<Dictionary<string, string>> user = query_db(query, parameters, true);
+
+    if (user[0].Count == 0) 
+    {
+        return Results.Json("Invalid username or password");
+    }
+    
+    UTF8Encoding utf8 = new UTF8Encoding();
+    SHA1 sha1 = SHA1.Create();
+    string hash = utf8.GetString(sha1.ComputeHash(utf8.GetBytes(password)));
+    
+    if (hash != user[0]["password"])
+    {
+        return Results.Json("Invalid username or password");
+    }
+
+    /* Note: Here the flask application first displays to the user
+        that they were logged in and then redirects the user.
+        This are possible because it is server-side rendered.
+        For now, this is unimplemented in this version of the application. */
+
+    context.Session.SetString("user_id", user[0]["user_id"]);
+    return Results.Redirect("/");
+});
+
+app.MapGet("/logout", (HttpContext context) => {
+
+    /* Note: Here the flask application first displays to the user
+       that they were logged out and then redirects the user.
+       This are possible because it is server-side rendered.
+       For now, this is unimplemented in this version of the application. */
+
+    context.Session.Remove("user_id");
+
+    return Results.Redirect("/public");
 });
 
 app.Run();
