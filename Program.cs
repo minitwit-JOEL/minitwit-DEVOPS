@@ -1,6 +1,7 @@
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.Unicode;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.Sqlite;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -91,8 +92,8 @@ long? get_user_id(string username) {
 
     SqliteConnection connection = connect_db();
     var command = connection.CreateCommand();
-    command.CommandText = "SELECT user_id FROM user WHERE username = @username";
-    command.Parameters.Add(new SqliteParameter("@username", username));
+    command.CommandText = "SELECT user_id FROM user WHERE username = @Username";
+    command.Parameters.Add(new SqliteParameter("@Username", username));
 
     long? user_id = null;
 
@@ -123,27 +124,35 @@ string gravatar_url(string email, int size=80) {
     return $"http://www.gravatar.com/avatar/{hexadec}?d=identicon&s={size}";
 }
 
-app.MapGet("/", () => {
+app.MapGet("/", (HttpRequest request, [FromQuery(Name = "offset")] int? offset) => {
 
-    SqliteConnection connection = connect_db();
+    Console.WriteLine(offset);
 
-    var command = connection.CreateCommand();
-    command.CommandText =
+    Console.WriteLine("We got a visitor from: " + 
+    request.HttpContext.Connection.RemoteIpAddress);
+
+    // TODO: insert session check and redirect to /public here
+
+    // TODO: retrieve user_id from session
+    int user_id = 0;
+
+    string query =
     @"
-        SELECT * FROM message
+        SELECT message.*, user.* from message, user
+        WHERE message.flagged = 0 AND 
+        message.author_id = user.user_id AND (
+        user.user_id = @User_id OR 
+        user.user_id IN (SELECT whom_id FROM follower
+        WHERE who_id = @User_id))
+        ORDER BY message.pub_date DESC LIMIT @Per_page
     ";
 
-    using (var reader = command.ExecuteReader())
-    {
-        while (reader.Read())
-        {
-            var name = reader.GetString(0);
+    SqliteParameter[] parameters = [
+        new SqliteParameter("@User_id", user_id), 
+        new SqliteParameter("@Per_page", PER_PAGE)
+    ];
 
-            Console.WriteLine($"Hello, {name}!");
-        }
-    }
-
-    connection.Close();
+    return query_db(query, parameters);
 });
 
 // Configure the HTTP request pipeline.
