@@ -56,6 +56,8 @@ List<Dictionary<string, string>> query_db(string query, SqliteParameter[]? args 
     } else {
         return list;
     }
+
+    connection.Close();
 }
 
 long? get_user_id(string username) {
@@ -72,6 +74,8 @@ long? get_user_id(string username) {
     {
         user_id = reader.GetInt64(0);
     }
+
+    connection.Close();
 
     return user_id;
 }
@@ -112,6 +116,8 @@ app.MapGet("/", () => {
             Console.WriteLine($"Hello, {name}!");
         }
     }
+
+    connection.Close();
 });
 
 // Configure the HTTP request pipeline.
