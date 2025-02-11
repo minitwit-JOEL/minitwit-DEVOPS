@@ -1,27 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\lukas\\Documents\\Universitet\\DevOps\\minitwit-DEVOPS\\minitwit.csproj": {}
+    "/Users/edwardrostomian/Documents/GitHub/minitwit-DEVOPS/minitwit.csproj": {}
   },
   "projects": {
-    "C:\\Users\\lukas\\Documents\\Universitet\\DevOps\\minitwit-DEVOPS\\minitwit.csproj": {
+    "/Users/edwardrostomian/Documents/GitHub/minitwit-DEVOPS/minitwit.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\lukas\\Documents\\Universitet\\DevOps\\minitwit-DEVOPS\\minitwit.csproj",
+        "projectUniqueName": "/Users/edwardrostomian/Documents/GitHub/minitwit-DEVOPS/minitwit.csproj",
         "projectName": "minitwit",
-        "projectPath": "C:\\Users\\lukas\\Documents\\Universitet\\DevOps\\minitwit-DEVOPS\\minitwit.csproj",
-        "packagesPath": "C:\\Users\\lukas\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\lukas\\Documents\\Universitet\\DevOps\\minitwit-DEVOPS\\obj\\",
+        "projectPath": "/Users/edwardrostomian/Documents/GitHub/minitwit-DEVOPS/minitwit.csproj",
+        "packagesPath": "/Users/edwardrostomian/.nuget/packages/",
+        "outputPath": "/Users/edwardrostomian/Documents/GitHub/minitwit-DEVOPS/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\lukas\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/Users/edwardrostomian/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -34,12 +32,21 @@
           "warnAsError": [
             "NU1605"
           ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
         }
       },
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "BCrypt.Net-Next": {
+              "target": "Package",
+              "version": "[4.0.3, )"
+            },
             "Microsoft.Data.Sqlite": {
               "target": "Package",
               "version": "[9.0.1, )"
@@ -64,7 +71,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.101/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.404/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
