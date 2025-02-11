@@ -124,6 +124,57 @@ long? get_user_id(string username) {
     return user_id;
 }
 
+app.MapGet("/{username}", (HttpContext context, string username) => 
+{
+    listOfUsers = query_db(
+        "SELECT * FROM user WHERE username = @Username",
+        new[] { newSqliteParameter("@Username", username) },
+        one: true);
+    
+    if(userList.Count == 0)
+        return Results.NotFound($"User '{username} not found.")
+    
+    var profileUser = userList[0];
+
+    bool following = false; 
+    var currentUserId = context.Session.GetString("user_id");
+
+    if (!string.IsNullOrEmpty(currentUserId))
+    {
+        var followList = query_db(
+            "SELECT 1 FROM follower WHERE who_id = @CurrentUserId AND whom_id = @ProfileUserId",
+            new[]
+            {
+                new SqliteParameter("@CurrentUserId", currentUserId),
+                new SqliteParameter("@ProfileUserId", profileUser["user_id"])
+            },
+            one: true);
+        following = followList.Count > 0;
+    }
+
+   var messages = query_db(@"
+        SELECT message.*, user.* 
+        FROM message, user 
+        WHERE user.user_id = message.author_id 
+          AND user.user_id = @ProfileUserId
+        ORDER BY message.pub_date DESC 
+        LIMIT @PerPage",
+        new[]
+        {
+            new SqliteParameter("@ProfileUserId", profileUser["user_id"]),
+            new SqliteParameter("@PerPage", PER_PAGE)
+        });
+
+
+ return Results.Json(new
+    {
+        profile_user = profileUser,
+        followed = followed,
+        messages = messages
+    });
+});
+
+
 string format_datetime(long timestamp) {
     /* Format a timestamp for display. */
     DateTimeOffset datetime = DateTimeOffset.FromUnixTimeSeconds(timestamp);
