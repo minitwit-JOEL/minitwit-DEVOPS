@@ -197,6 +197,30 @@ app.MapGet("/{username}/follow", (HttpContext context, string username) =>
     return Results.Redirect($"/{username}");
 });
 
+app.MapGet("/{username}/unfollow", (HttpContext context, string username) =>
+{
+    var currentUserId = context.Session.GetString("user_id");
+    if (string.IsNullOrEmpty(currentUserId))
+        return Results.Unauthorized();
+
+    long? whomId = get_user_id(username);
+    if (whomId == null)
+        return Results.NotFound($"User '{username}' not found.");
+
+    using (var connection = connect_db())
+    {
+        var command = connection.CreateCommand();
+        command.CommandText = "DELETE FROM follower WHERE who_id = @CurrentUserId AND whom_id = @WhomId";
+        command.Parameters.Add(new SqliteParameter("@CurrentUserId", currentUserId));
+        command.Parameters.Add(new SqliteParameter("@WhomId", whomId));
+        command.ExecuteNonQuery();
+    }
+
+    // again we could send a msg here? 
+    return Results.Redirect($"/{username}");
+});
+
+
 
 
 string format_datetime(long timestamp) {
