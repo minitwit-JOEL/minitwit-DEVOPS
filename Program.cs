@@ -174,6 +174,30 @@ app.MapGet("/{username}", (HttpContext context, string username) =>
     });
 });
 
+app.MapGet("/{username}/follow", (HttpContext context, string username) => 
+{
+    var currentUserId = context.Session.GetString("user_id");
+    if(string.IsNullOrEmpty(currentUserId))
+        return Results.Unauthorized();
+
+    long? otherId = get_user_id(username);
+    if(otherId == null)
+        return Results.NotFound($"User '{username}' not found ")
+    
+     using (var connection = connect_db())
+    {
+        var command = connection.CreateCommand();
+        command.CommandText = "INSERT INTO follower (who_id, whom_id) VALUES (@CurrentUserId, @WhomId)";
+        command.Parameters.Add(new SqliteParameter("@CurrentUserId", currentUserId));
+        command.Parameters.Add(new SqliteParameter("@WhomId", whomId));
+        command.ExecuteNonQuery();
+    }
+
+    // we could return a json msg here? 
+    return Results.Redirect($"/{username}");
+});
+
+
 
 string format_datetime(long timestamp) {
     /* Format a timestamp for display. */
