@@ -159,13 +159,13 @@ app.MapGet("/public", (HttpContext context) =>
 
 app.MapGet("/{username}", (HttpContext context, string username) =>
 {
-    listOfUsers = query_db(
+    var userList = query_db(
         "SELECT * FROM user WHERE username = @Username",
-        new[] { newSqliteParameter("@Username", username) },
+        new[] { new SqliteParameter("@Username", username) },
         one: true);
 
     if (userList.Count == 0)
-        return Results.NotFound($"User '{username} not found.")
+        return Results.NotFound($"User '{username} not found.");
 
 
     var profileUser = userList[0];
@@ -203,7 +203,7 @@ app.MapGet("/{username}", (HttpContext context, string username) =>
     return Results.Json(new
     {
         profile_user = profileUser,
-        followed = followed,
+        followed = following,
         messages = messages
     });
 });
@@ -216,7 +216,7 @@ app.MapGet("/{username}/follow", (HttpContext context, string username) =>
 
     long? otherId = get_user_id(username);
     if (otherId == null)
-        return Results.NotFound($"User '{username}' not found ")
+        return Results.NotFound($"User '{username}' not found ");
 
 
      using (var connection = connect_db())
@@ -224,7 +224,7 @@ app.MapGet("/{username}/follow", (HttpContext context, string username) =>
         var command = connection.CreateCommand();
         command.CommandText = "INSERT INTO follower (who_id, whom_id) VALUES (@CurrentUserId, @WhomId)";
         command.Parameters.Add(new SqliteParameter("@CurrentUserId", currentUserId));
-        command.Parameters.Add(new SqliteParameter("@WhomId", whomId));
+        command.Parameters.Add(new SqliteParameter("@WhomId", otherId));
         command.ExecuteNonQuery();
     }
 
