@@ -26,7 +26,7 @@ public class AuthController : ControllerBase
 
         if (string.IsNullOrEmpty(userId))
         {
-            return Ok("User already logged in");
+            return Unauthorized();
         }
         
         var query = "SELECT * FROM user WHERE username = @Username";
