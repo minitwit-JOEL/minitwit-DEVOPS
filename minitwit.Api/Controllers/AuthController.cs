@@ -1,10 +1,10 @@
 using System.Security.Cryptography;
 using System.Text;
-using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.Sqlite;
 using minitwit.Application.Services;
 using LoginRequest = minitwit.Infrastructure.Dtos.Requests.LoginRequest;
+using RegisterRequest = minitwit.Infrastructure.Dtos.Requests.RegisterRequest;
 
 namespace minitwit.Controllers;
 
@@ -62,6 +62,71 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Logout()
     {
         HttpContext.Session.Remove("user_id");
+        return Ok();
+    }
+
+    [HttpPost("register")]
+    public async Task<IActionResult> Register([FromBody] RegisterRequest request)
+    {
+        var userId = HttpContext.Session.GetString("user_id");
+
+        // Redirect if already logged in
+        if (!string.IsNullOrEmpty(userId))
+        {
+            return Ok();
+        }
+
+        string? error = null;
+
+        // Form validation
+        if (string.IsNullOrWhiteSpace(request.Username))
+        {
+            error = "You have to enter a username";
+        }
+        else if (string.IsNullOrWhiteSpace(request.Email) || !request.Email.Contains('@'))
+        {
+            error = "You have to enter a valid email address";
+        }
+        else if (string.IsNullOrWhiteSpace(request.Password))
+        {
+            error = "You have to enter a password";
+        }
+        else if (request.Password != request.ConfirmPassword)
+        {
+            error = "The two passwords do not match";
+        }
+        else if (_dbService.get_user_id(request.Username) != null)
+        {
+            error = "The username is already taken";
+        }
+
+        if (error != null)
+        {
+            return BadRequest(error);
+        }
+
+        // Hash the password using SHA1
+        var utf8 = new UTF8Encoding();
+        var sha1 = SHA1.Create();
+        var passwordHash = utf8.GetString(sha1.ComputeHash(utf8.GetBytes(request.Password)));
+
+        // Insert user into the database
+        var query = @"
+            INSERT INTO user (username, email, pw_hash)
+            VALUES (@Username, @Email, @PwHash)";
+
+        SqliteParameter[] parameters =
+        [
+            new SqliteParameter("@Username", request.Username),
+            new SqliteParameter("@Email", request.Email),
+            new SqliteParameter("@PwHash", passwordHash)
+        ]; 
+        
+        _dbService.query_db(query, parameters);
+        
+
+        HttpContext.Session.SetString("message", "You were successfully registered and can login now");
+
         return Ok();
     }
 }
