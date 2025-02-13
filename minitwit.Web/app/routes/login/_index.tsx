@@ -28,7 +28,7 @@ export const action: ActionFunction = async ({ request }) => {
     });
   }
 
-  const response = await fetch("https://localhost:7168/api/login", {
+  const response = await fetch("https://localhost:7168/api/auth/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(loginRequestDto),

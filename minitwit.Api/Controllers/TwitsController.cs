@@ -29,12 +29,13 @@ public class TwitsController : ControllerBase
 
         if (string.IsNullOrEmpty(userId))
         {
-            return Unauthorized("User is not logged in");
+            var publicTwits = await _twitsService.GetPublicTimeline(page);
+            return Ok(publicTwits);
         }
         
-        var twits = await _twitsService.GetFeed(int.Parse (userId), page);
+        var privateTwits = await _twitsService.GetFeed(int.Parse (userId), page);
 
-        return Ok(twits);
+        return Ok(privateTwits);
     }
 
     [HttpGet("user")]

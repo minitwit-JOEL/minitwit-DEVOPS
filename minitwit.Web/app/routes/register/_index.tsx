@@ -24,6 +24,7 @@ export const action: ActionFunction = async ({ request }) => {
     username: username,
     email: email,
     password: password,
+    confirmPassword: passwordRepeat,
   };
 
   if (!username || !email || !password || !passwordRepeat) {
@@ -38,7 +39,7 @@ export const action: ActionFunction = async ({ request }) => {
     });
   }
 
-  const response = await fetch("https://localhost:7168/api/register", {
+  const response = await fetch("https://localhost:7168/api/auth/register", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(registerRequestDto),
