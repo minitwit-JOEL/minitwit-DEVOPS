@@ -356,8 +356,6 @@ app.MapPost("/login", (
     if (string.IsNullOrEmpty(user_id))
         return Results.Redirect("/pulic");
 
-    string? error = null;
-
     string query = "SELECT * FROM user WHERE username = @Username";
     SqliteParameter[] parameters = [
         new SqliteParameter("@Username", username),
@@ -432,8 +430,10 @@ app.MapPost("/register", async (
         return Results.Json(new { error });
     }
 
-    // Hash the password using BCrypt
-    string passwordHash = BCrypt.Net.BCrypt.HashPassword(password);
+    // Hash the password using SHA1
+    UTF8Encoding utf8 = new UTF8Encoding();
+    SHA1 sha1 = SHA1.Create();
+    string passwordHash = utf8.GetString(sha1.ComputeHash(utf8.GetBytes(password)));
 
     // Insert user into the database
     using (var connection = connect_db())
