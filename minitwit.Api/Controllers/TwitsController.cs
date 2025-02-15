@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using minitwit.Application.Interfaces;
 
@@ -25,45 +27,55 @@ public class TwitsController : ControllerBase
     [HttpGet("feed")]
     public async Task<IActionResult> GetPrivateTwits([FromQuery] int page = default)
     {
-        var userId = HttpContext.Session.GetString("user_id");
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
         if (string.IsNullOrEmpty(userId))
         {
             var publicTwits = await _twitsService.GetPublicTimeline(page);
-            return Ok(publicTwits);
+            return Ok(new
+            {
+                id = 0,
+                twits = publicTwits
+            });
         }
         
-        var privateTwits = await _twitsService.GetFeed(int.Parse (userId), page);
+        var privateTwits = await _twitsService.GetFeed(int.Parse(userId), page);
 
-        return Ok(privateTwits);
+        return Ok(new
+        {
+            id = 1,
+            twits = privateTwits
+        });
     }
 
-    [HttpGet("user")]
-    public async Task<IActionResult> GetUsersTwits([FromQuery] int authorId, [FromQuery] int page = default)
+    [Authorize]
+    [HttpGet("user/{authorName}")]
+    public async Task<IActionResult> GetUsersTwits(string authorName, [FromQuery] int page = default)
     {
-        var userId = HttpContext.Session.GetString("user_id");
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
         if (string.IsNullOrEmpty(userId))
         {
             return Unauthorized("User is not logged in");
         }
         
-        var twits = await _twitsService.GetUsersTwits(authorId, page);
+        var twits = await _twitsService.GetUsersTwitsByName(authorName, page);
         
         return Ok(twits);
     }
     
+    [Authorize]
     [HttpPost]
     public async Task<IActionResult> PostTwit([FromBody] string message)
     {
-        var userId = HttpContext.Session.GetString("user_id");
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        
         if (string.IsNullOrEmpty(userId) || !int.TryParse(userId, out var parsedUserId))
         {
             return Unauthorized("User was not logged in");
         }
 
         var twit = await _twitsService.PostTwit(parsedUserId, message);
-        
-        HttpContext.Session.SetString("message", "Your message was recorded");
 
         return Ok(twit);
     }

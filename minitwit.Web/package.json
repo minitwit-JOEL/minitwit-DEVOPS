@@ -15,10 +15,11 @@
     "@remix-run/express": "^2.15.3",
     "@remix-run/node": "^2.15.3",
     "@remix-run/react": "^2.15.3",
+    "blueimp-md5": "^2.19.0",
     "cross-env": "^7.0.3",
     "express": "^4.21.2",
     "isbot": "^4.1.0",
-    "react": "^18.2.0",
+    "react": "^18.3.1",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
@@ -35,7 +36,7 @@
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "postcss": "^8.4.38",
-    "remix-flat-routes": "^0.8.4",
+    "remix-flat-routes": "^0.6.5",
     "tailwindcss": "^3.4.4",
     "typescript": "^5.1.6",
     "vite": "^5.1.0",

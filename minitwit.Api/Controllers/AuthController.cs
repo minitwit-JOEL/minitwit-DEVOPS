@@ -1,4 +1,9 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using minitwit.Application.Interfaces;
 using LoginRequest = minitwit.Infrastructure.Dtos.Requests.LoginRequest;
 using RegisterRequest = minitwit.Infrastructure.Dtos.Requests.RegisterRequest;
@@ -19,38 +24,61 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
-        var userId = HttpContext.Session.GetString("user_id");
-
-        if (!string.IsNullOrEmpty(userId))
-        {
-            return BadRequest("User is already logged in");
-        }
         
         var user = await _authService.Login(request.Username, request.Password);
-        HttpContext.Session.SetString("user_id", user.Id.ToString());
-        return Ok();
+        
+        if (user is null)
+        {
+            return Unauthorized(new { message = "Invalid username or password" });
+        }
+    
+        var jwtKey = "jg4mywvyYnFJgJhLT+6AmMllIL4t/86qY75kt42HRmV4=";
+        var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(new[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Name, user.Username),
+                new Claim(ClaimTypes.Email, user.Email)
+            }),
+            Expires = DateTime.UtcNow.AddMinutes(60),
+            Issuer = "Oliver",
+            Audience = "Oliver",
+            SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256)
+        };
 
+        var token = tokenHandler.CreateToken(tokenDescriptor);
+        var tokenString = tokenHandler.WriteToken(token);
+        
+        return Ok(new
+        {
+            id = user.Id,
+            username = user.Username,
+            email = user.Email,
+            token = tokenString
+        });
     }
 
+    [Authorize]
     [HttpPost("logout")]
     public async Task<IActionResult> Logout()
     {
-        var userId = HttpContext.Session.GetString("user_id");
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        if (!string.IsNullOrEmpty(userId))
+        if (string.IsNullOrEmpty(userId))
         {
             return BadRequest("User is already logged out");
         }
         
-        HttpContext.Session.Remove("user_id");
         return Ok();
     }
 
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterRequest request)
     {
-        var userId = HttpContext.Session.GetString("user_id");
-        
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (!string.IsNullOrEmpty(userId))
         {
             return Ok("User is already logged in");
@@ -58,8 +86,6 @@ public class AuthController : ControllerBase
     
         await _authService.Register(request.Username, request.Email, request.Password, request.ConfirmPassword);
         
-        HttpContext.Session.SetString("message", "You were successfully registered and can login now");
-
         return Ok("Successfully registered and can login now");
     }
 }

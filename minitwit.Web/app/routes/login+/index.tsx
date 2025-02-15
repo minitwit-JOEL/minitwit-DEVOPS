@@ -1,58 +1,59 @@
-import type { ActionFunction, MetaFunction } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
-import { Form, useActionData } from "@remix-run/react";
-import { LoginRequestDto } from "~/types/LoginRequestDto";
+import {
+  ActionFunction,
+  json,
+  LoaderFunction,
+  MetaFunction,
+} from "@remix-run/node";
+import { Form, redirect } from "@remix-run/react";
+import { createUserSession, getUserSession } from "~/util/session.server";
 
 export const meta: MetaFunction = () => {
   return [{ title: "Sign In | MiniTwit" }];
 };
 
-interface ActionData {
-  message?: string;
-  username?: string;
+interface LoginDto {
+  id: number;
+  username: string;
+  email: string;
+  token: string;
 }
+
+export const loader: LoaderFunction = async ({ request }) => {
+  const session = await getUserSession(request);
+  const token = session.get("token");
+
+  if (token) {
+    return redirect("/timeline");
+  }
+  return json({});
+};
 
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
   const username = formData.get("username") as string;
   const password = formData.get("password") as string;
 
-  const loginRequestDto: LoginRequestDto = {
-    username: username,
-    password: password,
-  };
-
-  if (!username || !password) {
-    return json({
-      message: "Login failed. Please fill in " + "both a username and password",
-    });
-  }
-
   const response = await fetch("https://localhost:7168/api/auth/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(loginRequestDto),
+    body: JSON.stringify({ username, password }),
   });
 
   if (!response.ok) {
-    const responseData = await response.json();
-    throw new Error(responseData.detail);
+    return { message: "Invalid credentials", username };
   }
 
-  return redirect("/timeline");
+  const user: LoginDto = await response.json();
+
+  return redirect("/", {
+    headers: { "Set-Cookie": await createUserSession(user.token, user) },
+  });
 };
 
 export default function SignInPage() {
-  const actionData = useActionData<ActionData>();
-
   return (
     <div>
       <h2>Sign In</h2>
-      {actionData?.message && (
-        <div className="error">
-          <strong>Error:</strong> {actionData.message}
-        </div>
-      )}
       <Form method="post">
         <dl>
           <dt>Username:</dt>
@@ -61,7 +62,7 @@ export default function SignInPage() {
               type="text"
               name="username"
               size={30}
-              defaultValue={actionData?.username ?? ""}
+              placeholder={`Username`}
             />
           </dd>
           <dt>Password:</dt>

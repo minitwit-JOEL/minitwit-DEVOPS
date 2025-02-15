@@ -7,24 +7,31 @@ namespace minitwit.Application.Services;
 
 public class FollowService : IFollowService
 {
-    public readonly ApplicationDbContext _dbContext;
+    private readonly ApplicationDbContext _dbContext;
 
     public FollowService(ApplicationDbContext dbContext)
     {
         _dbContext = dbContext;
     }
-    
+
+    public async Task<Follow?> CheckFollowByUsername(int id, string username)
+    {
+        return await _dbContext.Followers
+            .Where(f => f.WhoId == id && f.Whom.Username == username)
+            .FirstAsync();
+    }
+
     public async Task<Follow> AddFollow(int whoId, string whomUsername)
     {
-        var user = await _dbContext.Users.FindAsync(whoId);
-        var toFollowUser = await _dbContext.Users.FindAsync(whomUsername);
-        
+        var user = await _dbContext.Users.SingleAsync(u => u.Id == whoId);
+        var toFollowUser = await _dbContext.Users.SingleAsync(u => u.Username == whomUsername);
+
         if (user is null || toFollowUser is null) 
         {
             throw new ArgumentException("No user found with the given username");
         }
 
-        var follow = new Follow { WhoId = whoId, WhomId = whoId };
+        var follow = new Follow { WhoId = whoId, WhomId = toFollowUser.Id };
         
         await _dbContext.AddAsync(follow);
         await _dbContext.SaveChangesAsync();
@@ -34,9 +41,8 @@ public class FollowService : IFollowService
 
     public async Task<Follow> RemoveFollow(int whoId, string whomUsername)
     {
-        var user = await _dbContext.Users.FindAsync(whoId);
-        var toUnFollowUser = await _dbContext.Users.FindAsync(whomUsername);
-        
+        var user = await _dbContext.Users.SingleAsync(u => u.Id == whoId);
+        var toUnFollowUser = await _dbContext.Users.SingleAsync(u => u.Username == whomUsername);
         if (user is null || toUnFollowUser is null) 
         {
             throw new ArgumentException("No user found with the given username");

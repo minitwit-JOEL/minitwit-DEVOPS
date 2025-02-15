@@ -21,10 +21,9 @@ public class TwitsService : ITwitsService
     public async Task<IEnumerable<Message>> GetPublicTimeline(int page)
     {
         return await _dbContext.Messages
+            .Include(m => m.Author)
             .Where(m => !m.Flagged)
             .OrderByDescending(m => m.CreatedAt)
-            .Skip(PageSize *page)
-            .Take(page)
             .ToListAsync();
     }
     
@@ -39,8 +38,8 @@ public class TwitsService : ITwitsService
             .Include(m => m.Author)
             .Where(m => !m.Flagged && (m.AuthorId == userId || followers.Contains(m.AuthorId)))
             .OrderByDescending(m => m.CreatedAt)
-            .Skip(PageSize * page)
-            .Take(PageSize)
+            //.Skip(PageSize * page)
+            //.Take(PageSize)
             .ToListAsync();
     }
 
@@ -64,6 +63,25 @@ public class TwitsService : ITwitsService
         return twits;
     }
 
+    public async Task<IEnumerable<Message>> GetUsersTwitsByName(string userName, int page = default)
+    {
+        var user = await _dbContext.Users.SingleAsync(u => u.Username == userName);
+        if (user is null)
+        {
+            throw new ArgumentException("No user with this name");
+        }
+
+        var twits = await _dbContext.Messages
+            .Include(m => m.Author)
+            .Where(m => m.Author.Username == user.Username && !m.Flagged)
+            .OrderByDescending(m => m.CreatedAt)
+            //.Skip(PageSize * page)
+            //.Take(page)
+            .ToListAsync();
+        
+        return twits;
+    }
+    
     public async Task<Message> PostTwit(int userId, string text)
     {
         if (string.IsNullOrWhiteSpace(text))
@@ -75,7 +93,7 @@ public class TwitsService : ITwitsService
         {
             AuthorId = userId,
             Text = text,
-            CreatedAt = DateTime.Now,
+            CreatedAt = DateTime.UtcNow,
             Flagged = false
         };
 

@@ -1,10 +1,10 @@
-export interface Message {
-    id: number;
-    authorId: number;
-    message: string;
-    date: string;
-    flagged: boolean;
+import { UserDto } from "~/types/UserDto";
 
-    // TODO: Delete this
-    username: string;
+export interface Message {
+  id: number;
+  authorId: number;
+  author: UserDto | null;
+  text: string;
+  createdAt: string;
+  flagged: boolean;
 }
