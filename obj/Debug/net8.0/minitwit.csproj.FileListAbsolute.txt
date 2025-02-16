@@ -52,3 +52,13 @@
 /mnt/c/Users/lukas/Documents/Universitet/DevOps/minitwit-DEVOPS/bin/Debug/net8.0/runtimes/win-x64/native/e_sqlite3.dll
 /mnt/c/Users/lukas/Documents/Universitet/DevOps/minitwit-DEVOPS/bin/Debug/net8.0/runtimes/win-x86/native/e_sqlite3.dll
 /mnt/c/Users/lukas/Documents/Universitet/DevOps/minitwit-DEVOPS/obj/Debug/net8.0/minitwit.csproj.CopyComplete
+/Users/edwardrostomian/Documents/GitHub/minitwit-DEVOPS/obj/Debug/net8.0/minitwit.csproj.AssemblyReference.cache
+/Users/edwardrostomian/Documents/GitHub/minitwit-DEVOPS/obj/Debug/net8.0/minitwit.GeneratedMSBuildEditorConfig.editorconfig
+/Users/edwardrostomian/Documents/GitHub/minitwit-DEVOPS/obj/Debug/net8.0/minitwit.AssemblyInfoInputs.cache
+/Users/edwardrostomian/Documents/GitHub/minitwit-DEVOPS/obj/Debug/net8.0/minitwit.AssemblyInfo.cs
+/Users/edwardrostomian/Documents/GitHub/minitwit-DEVOPS/obj/Debug/net8.0/minitwit.csproj.CoreCompileInputs.cache
+/Users/edwardrostomian/Documents/GitHub/minitwit-DEVOPS/obj/Debug/net8.0/minitwit.MvcApplicationPartsAssemblyInfo.cache
+/Users/edwardrostomian/Documents/GitHub/minitwit-DEVOPS/obj/Debug/net8.0/minitwit.sourcelink.json
+/Users/edwardrostomian/Documents/GitHub/minitwit-DEVOPS/obj/Debug/net8.0/minitwit.dll
+/Users/edwardrostomian/Documents/GitHub/minitwit-DEVOPS/obj/Debug/net8.0/refint/minitwit.dll
+/Users/edwardrostomian/Documents/GitHub/minitwit-DEVOPS/obj/Debug/net8.0/minitwit.pdb
