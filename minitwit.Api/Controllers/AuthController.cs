@@ -24,14 +24,14 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
-        
+
         var user = await _authService.Login(request.Username, request.Password);
-        
+
         if (user is null)
         {
             return Unauthorized(new { message = "Invalid username or password" });
         }
-    
+
         var jwtKey = "jg4mywvyYnFJgJhLT+6AmMllIL4t/86qY75kt42HRmV4=";
         var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
         var tokenHandler = new JwtSecurityTokenHandler();
@@ -51,7 +51,7 @@ public class AuthController : ControllerBase
 
         var token = tokenHandler.CreateToken(tokenDescriptor);
         var tokenString = tokenHandler.WriteToken(token);
-        
+
         return Ok(new
         {
             id = user.Id,
@@ -71,21 +71,21 @@ public class AuthController : ControllerBase
         {
             return BadRequest("User is already logged out");
         }
-        
+
         return Ok();
     }
 
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterRequest request)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (!string.IsNullOrEmpty(userId))
+        try
         {
-            return Ok("User is already logged in");
+            var user = await _authService.Register(request.Username, request.Email, request.Password, request.ConfirmPassword);
+            return StatusCode(204); // No Content (successful registration)
         }
-    
-        await _authService.Register(request.Username, request.Email, request.Password, request.ConfirmPassword);
-        
-        return Ok("Successfully registered and can login now");
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { status = 400, error_msg = ex.Message });
+        }
     }
 }
