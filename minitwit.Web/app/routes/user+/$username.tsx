@@ -38,7 +38,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   }
 
   const messagesResponse = await fetch(
-    `https://localhost:7168/api/twit/user/${username}`,
+    `https://minitwit-api:8080/api/twit/user/${username}`,
     {
       method: "GET",
       headers: {
@@ -48,7 +48,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     }
   );
 
-  const userResponse = await fetch(`https://localhost:7168/api/user`, {
+  const userResponse = await fetch(`https://minitwit-api:8080/api/user`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -57,7 +57,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   });
 
   const profileUserResponse = await fetch(
-    `https://localhost:7168/api/user/${username}`,
+    `https://minitwit-api:8080/api/user/${username}`,
     {
       method: "GET",
       headers: {
@@ -68,7 +68,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   );
 
   const followResponse = await fetch(
-    `https://localhost:7168/api/follow/${username}`,
+    `https://minitwit-api:8080/api/follow/${username}`,
     {
       method: "GET",
       headers: {
@@ -100,7 +100,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 
   if (intent === "follow") {
     const response = await fetch(
-      `https://localhost:7168/api/follow/${username}`,
+      `https://minitwit-api:8080/api/follow/${username}`,
       {
         method: "POST",
         headers: {
@@ -116,7 +116,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     return json({ followed: true });
   } else if (intent === "unfollow") {
     const response = await fetch(
-      `https://localhost:7168/api/follow/${username}/unfollow`,
+      `https://minitwit-api:8080/api/follow/${username}/unfollow`,
       {
         method: "POST",
         headers: {

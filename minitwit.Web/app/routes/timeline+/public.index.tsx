@@ -9,7 +9,7 @@ export interface LoaderData {
 
 export const loader: LoaderFunction = async () => {
   const messagesResponse = await fetch(
-    `https://localhost:7168/api/twit/public`,
+    `https://minitwit-api:8080/api/twit/public`,
     {
       method: "GET",
       headers: {

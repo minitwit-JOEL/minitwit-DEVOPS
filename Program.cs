@@ -13,7 +13,20 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(8080, listenOptions =>
+    {
+        listenOptions.UseHttps("/app/aspnetapp.pfx", "yourpassword");
+    });
+});
+
 var app = builder.Build();
+
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.SetMinimumLevel(LogLevel.Debug);
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

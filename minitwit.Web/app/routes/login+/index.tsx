@@ -33,7 +33,7 @@ export const action: ActionFunction = async ({ request }) => {
   const username = formData.get("username") as string;
   const password = formData.get("password") as string;
 
-  const response = await fetch("https://localhost:7168/api/auth/login", {
+  const response = await fetch("https://minitwit-api:8080/api/auth/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username, password }),

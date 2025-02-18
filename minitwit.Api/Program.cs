@@ -14,7 +14,7 @@ var connectionString = "Host=localhost;Port=5432;Database=postgres;Username=post
     ;//builder.Configuration.GetConnectionString("DbConnection");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql("Host=localhost;Port=5433;Database=postgres;Username=root;Password=root;"));
+    options.UseNpgsql("Host=db;Port=5432;Database=minitwit;Username=postgres;Password=postgres;"));
 
 builder.Services.AddSession(options => {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
@@ -33,7 +33,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: "DevelopmentOrigins",
         policy =>
         {
-            policy.WithOrigins("http://localhost:3100")
+            policy.WithOrigins("http://db:3100")
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials();
@@ -76,6 +76,10 @@ app.UseCookiePolicy(new CookiePolicyOptions
 });
 
 app.MapControllers();
-app.Run();
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    db.Database.Migrate();
+}
 
 app.Run();

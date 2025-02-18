@@ -5,7 +5,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   const session = await getUserSession(request);
   const token = session.get("token");
 
-  const response = await fetch("https://localhost:7168/api/auth/logout", {
+  const response = await fetch("https://minitwit-api:8080/api/auth/logout", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,

@@ -24,7 +24,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   const session = await getUserSession(request);
   const token = session.get("token");
 
-  const messagesResponse = await fetch(`https://localhost:7168/api/twit/feed`, {
+  const messagesResponse = await fetch(`https://minitwit-api:8080/api/twit/feed`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -32,7 +32,7 @@ export const loader: LoaderFunction = async ({ request }) => {
     },
   });
 
-  const userResponse = await fetch(`https://localhost:7168/api/user`, {
+  const userResponse = await fetch(`https://minitwit-api:8080/api/user`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -57,7 +57,7 @@ export const action: ActionFunction = async ({ request }) => {
     return redirect("/login");
   }
 
-  const response = await fetch(`https://localhost:7168/api/twit`, {
+  const response = await fetch(`https://minitwit-api:8080/api/twit`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
