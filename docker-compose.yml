@@ -1,9 +1,7 @@
-version: '3.8'
+version: '3.9'
 services:
   db:
-    build:
-      context: .
-      dockerfile: ./minitwit.Infrastructure/Dockerfile.db
+    image: postgres:latest
     container_name: minitwit-db
     environment:
       - POSTGRES_USER=postgres
@@ -17,33 +15,26 @@ services:
   minitwit-api:
     build:
       context: .
-      dockerfile: ./minitwit.Api/Dockerfile.api
+      dockerfile: ./minitwit.Api/Dockerfile
     depends_on:
       - db
-    ports:
-      - "5000:8080"
     environment:
-      - ASPNETCORE_URLS=https://+:8080
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/aspnetapp.pfx
-      - ASPNETCORE_Kestrel__Certificates__Default__Password=yourpassword
-      - ASPNETCORE_HTTPS_PORT=8080
-      - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=minitwit;Username=postgres;Password=postgres
-      - NODE_TLS_REJECT_UNAUTHORIZED=0
-      
+    ports:
+      - "8080:8081"
+
   web:
     build:
       context: ./minitwit.Web
-      dockerfile: Dockerfile.web
+      dockerfile: Dockerfile
     container_name: minitwit-web
     depends_on:
       - minitwit-api
     environment:
-    - PORT=3000
-    - ApiBaseUrl=http://minitwit-api:8080
-    env_file:
-    - ./minitwit.Web/.env
+      - API_BASE_URL=http://minitwit-api:8080/
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
     ports:
-    - "8080:3000"
+      - "3000:3000"
+
 volumes:
   db-data:

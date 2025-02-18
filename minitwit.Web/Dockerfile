@@ -5,13 +5,17 @@ FROM node:18-alpine
 WORKDIR /app
 
 #Copy package.json and install dependencies
-COPY package.json package-lock.json ./
+COPY package*.json ./
 RUN npm install
 
 #Copy the rest of the project files
 COPY . .
+
+#Build the application
+RUN npm run build
+
 #Expose port for the frontend
 EXPOSE 3000
 
 #Start the Remix app
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "start"]
