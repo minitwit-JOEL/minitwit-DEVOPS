@@ -1,11 +1,11 @@
-import { ActionFunction, LoaderFunction, redirect } from "@remix-run/node";
+import { LoaderFunction, redirect } from "@remix-run/node";
 import { destroyUserSession, getUserSession } from "~/util/session.server";
 
 export const loader: LoaderFunction = async ({ request }) => {
   const session = await getUserSession(request);
   const token = session.get("token");
 
-  const response = await fetch("https://minitwit-api:8080/api/auth/logout", {
+  const response = await fetch(`${process.env.API_BASE_URL}api/auth/logout`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,

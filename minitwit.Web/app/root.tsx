@@ -53,7 +53,7 @@ function PageLayout() {
     const handleLogout = async (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
         e.preventDefault();
 
-        await fetch("/logout", { method: "POST" });
+        await fetch("/logout", { method: "GET" });
 
         window.location.href = "/login";
     };

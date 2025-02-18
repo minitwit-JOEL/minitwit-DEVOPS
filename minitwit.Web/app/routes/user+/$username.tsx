@@ -6,8 +6,6 @@ import {
 } from "@remix-run/node";
 import { getUserSession } from "~/util/session.server";
 import {
-  Form,
-  useActionData,
   useFetcher,
   useLoaderData,
 } from "@remix-run/react";
@@ -38,7 +36,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   }
 
   const messagesResponse = await fetch(
-    `https://minitwit-api:8080/api/twit/user/${username}`,
+    `${process.env.API_BASE_URL}api/twit/user/${username}`,
     {
       method: "GET",
       headers: {
@@ -48,7 +46,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     }
   );
 
-  const userResponse = await fetch(`https://minitwit-api:8080/api/user`, {
+  const userResponse = await fetch(`${process.env.API_BASE_URL}api/user`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -57,7 +55,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   });
 
   const profileUserResponse = await fetch(
-    `https://minitwit-api:8080/api/user/${username}`,
+    `${process.env.API_BASE_URL}api/user/${username}`,
     {
       method: "GET",
       headers: {
@@ -68,7 +66,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   );
 
   const followResponse = await fetch(
-    `https://minitwit-api:8080/api/follow/${username}`,
+    `${process.env.API_BASE_URL}api/follow/${username}`,
     {
       method: "GET",
       headers: {
@@ -100,7 +98,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 
   if (intent === "follow") {
     const response = await fetch(
-      `https://minitwit-api:8080/api/follow/${username}`,
+      `${process.env.API_BASE_URL}api/follow/${username}`,
       {
         method: "POST",
         headers: {
@@ -116,7 +114,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     return json({ followed: true });
   } else if (intent === "unfollow") {
     const response = await fetch(
-      `https://minitwit-api:8080/api/follow/${username}/unfollow`,
+      `${process.env.API_BASE_URL}api/follow/${username}/unfollow`,
       {
         method: "POST",
         headers: {
