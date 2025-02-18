@@ -10,11 +10,9 @@ using minitwit.Infrastructure.Data;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDistributedMemoryCache();
-var connectionString = "Host=localhost;Port=5432;Database=postgres;Username=postgres;Password=yourpassword;"
-    ;//builder.Configuration.GetConnectionString("DbConnection");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql("Host=db;Port=5432;Database=minitwit;Username=postgres;Password=postgres;"));
+        options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddSession(options => {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
@@ -33,7 +31,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: "DevelopmentOrigins",
         policy =>
         {
-            policy.WithOrigins("http://db:3100")
+            policy.WithOrigins("http://localhost:3000")
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials();
@@ -76,10 +74,4 @@ app.UseCookiePolicy(new CookiePolicyOptions
 });
 
 app.MapControllers();
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    db.Database.Migrate();
-}
-
 app.Run();
