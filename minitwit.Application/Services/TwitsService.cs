@@ -1,5 +1,7 @@
+using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Extensions.Logging;
 using minitwit.Application.Interfaces;
 using minitwit.Domain.Entities;
 using minitwit.Infrastructure.Data;
@@ -104,12 +106,15 @@ public class TwitsService : ITwitsService
 
     public async Task<int> GetLatestProcessedCommandId()
     {
-        string filePath = "./latest_processed_sim_action_id.txt";
+
+        var filePath = "../latest_processed_sim_action_id.txt";
 
         try
         {
             // Read the file content
             var content = await File.ReadAllTextAsync(filePath);
+
+            content = content.Trim();
 
             // Try parsing the content to integer
             if (int.TryParse(content, out int latestProcessedCommandId))
@@ -118,12 +123,14 @@ public class TwitsService : ITwitsService
             }
             else
             {
+                Console.Error.WriteLine($"Error: File content '{content}' is not a valid integer.");
                 return -1; // Return -1 if the file content is not a valid integer
             }
         }
-        catch (Exception)
+        catch (Exception e)
         {
             // Return -1 in case of any error, e.g., file not found or invalid format
+            Console.Error.WriteLine($"Error: An unexpected exception occurred - {e.Message}");
             return -1;
         }
     }
