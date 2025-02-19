@@ -25,6 +25,11 @@ builder.Services.AddScoped<IFollowService, FollowService>();
 builder.Services.AddScoped<ITwitsService, TwitsService>();
 builder.Services.AddScoped<IUserService, UserSerivce>();
 
+// SIM api
+builder.Services.AddScoped<minitwit.Application.Interfaces.Sim.IAuthService, minitwit.Application.Services.Sim.AuthService>();
+builder.Services.AddScoped<minitwit.Application.Interfaces.Sim.IFollowService, minitwit.Application.Services.Sim.FollowService>();
+builder.Services.AddScoped<minitwit.Application.Interfaces.Sim.ITwitsService, minitwit.Application.Services.Sim.TwitsService>();
+
 builder.Services.AddControllers();
 builder.Services.AddCors(options =>
 {

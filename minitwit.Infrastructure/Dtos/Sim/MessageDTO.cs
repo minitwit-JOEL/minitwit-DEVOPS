@@ -1,4 +1,4 @@
-namespace minitwit.Infrastructure.Dtos
+namespace minitwit.Infrastructure.Dtos.Sim
 {
     public class MessageDto
     {
