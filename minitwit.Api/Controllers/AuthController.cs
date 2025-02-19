@@ -81,11 +81,17 @@ public class AuthController : ControllerBase
         try
         {
             var user = await _authService.Register(request.Username, request.Email, request.Password, request.ConfirmPassword);
-            return StatusCode(204); // No Content (successful registration)
+            return NoContent(); // 204 No Content
         }
         catch (ArgumentException ex)
         {
-            return BadRequest(new { status = 400, error_msg = ex.Message });
+            var errorResponse = new { status = 400, error_msg = ex.Message };
+            return BadRequest(errorResponse);
+        }
+        catch (Exception e)
+        {
+            var errorResponse = new { status = 500, error_msg = "An unexpected error occurred." };
+            return StatusCode(500, errorResponse);
         }
     }
 }
