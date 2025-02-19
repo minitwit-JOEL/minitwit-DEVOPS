@@ -24,7 +24,7 @@ app.all('*', createRequestHandler({ build }))
 // http://expressjs.com/en/advanced/best-practice-security.html#at-a-minimum-disable-x-powered-by-header
 app.disable('x-powered-by')
 
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 3100
 app.listen(port, '0.0.0.0', () => {
   console.log(`App listening on http://localhost:${port}`)
 })
