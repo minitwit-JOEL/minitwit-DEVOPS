@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using minitwit.Application.Interfaces;
 
-namespace minitwit.Controllers;
+namespace minitwit.Controllers.Api;
 
 [Authorize]
 [ApiController]

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using minitwit.Application.Interfaces;
 
-namespace minitwit.Controllers;
+namespace minitwit.Controllers.Api;
 
 [ApiController]
 [Route("api/twit")]
@@ -78,15 +78,5 @@ public class TwitsController : ControllerBase
         var twit = await _twitsService.PostTwit(parsedUserId, message);
 
         return Ok(twit);
-    }
-
-    [HttpGet("latest")]
-    public async Task<IActionResult> GetLatestProcessedCommandId()
-    {
-        // Call the service to get the latest processed command ID
-        var latestProcessedCommandId = await _twitsService.GetLatestProcessedCommandId();
-
-        // Return the result in JSON format
-        return Ok(new { latest = latestProcessedCommandId });
     }
 }

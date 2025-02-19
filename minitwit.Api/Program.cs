@@ -4,8 +4,16 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using minitwit.Application.Interfaces;
+using minitwit.Application.Interfaces.Sim;
 using minitwit.Application.Services;
+using minitwit.Application.Services.Sim;
 using minitwit.Infrastructure.Data;
+using AuthService = minitwit.Application.Services.AuthService;
+using FollowService = minitwit.Application.Services.FollowService;
+using IAuthService = minitwit.Application.Interfaces.IAuthService;
+using IFollowService = minitwit.Application.Interfaces.IFollowService;
+using ITwitsService = minitwit.Application.Interfaces.ITwitsService;
+using TwitsService = minitwit.Application.Services.TwitsService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +32,12 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IFollowService, FollowService>();
 builder.Services.AddScoped<ITwitsService, TwitsService>();
 builder.Services.AddScoped<IUserService, UserSerivce>();
+
+// SIM api
+builder.Services.AddScoped<minitwit.Application.Interfaces.Sim.IAuthService, minitwit.Application.Services.Sim.AuthService>();
+builder.Services.AddScoped<minitwit.Application.Interfaces.Sim.IFollowService, minitwit.Application.Services.Sim.FollowService>();
+builder.Services.AddScoped<minitwit.Application.Interfaces.Sim.ITwitsService, minitwit.Application.Services.Sim.TwitsService>();
+builder.Services.AddScoped<ISimService, SimService>();
 
 builder.Services.AddControllers();
 builder.Services.AddCors(options =>

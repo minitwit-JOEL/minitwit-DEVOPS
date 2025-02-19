@@ -1,11 +1,9 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Net.Http.Headers;
 using minitwit.Application.Interfaces;
-using minitwit.Domain.Entities;
 
-namespace minitwit.Controllers;
+namespace minitwit.Controllers.Api;
 
 [ApiController]
 [Route("api/user")]
