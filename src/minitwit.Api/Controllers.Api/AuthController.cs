@@ -8,17 +8,22 @@ using minitwit.Application.Interfaces;
 using LoginRequest = minitwit.Infrastructure.Dtos.Requests.LoginRequest;
 using RegisterRequest = minitwit.Infrastructure.Dtos.Requests.RegisterRequest;
 
-namespace minitwit.Controllers;
+namespace minitwit.Controllers.Api;
 
 [ApiController]
 [Route("api/auth")]
 public class AuthController : ControllerBase
 {
+    private readonly IConfiguration _configuration;
     private readonly IAuthService _authService;
+    private readonly SigningCredentials _signingCredentials;
 
-    public AuthController(IAuthService authService)
+    public AuthController(IConfiguration configuration, IAuthService authService)
     {
         _authService = authService;
+        var jwtKey = _configuration.GetValue<string>("Token:Key");
+        var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
+        _signingCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
     }
 
     [HttpPost("login")]
@@ -31,9 +36,7 @@ public class AuthController : ControllerBase
         {
             return Unauthorized(new { message = "Invalid username or password" });
         }
-
-        var jwtKey = "jg4mywvyYnFJgJhLT+6AmMllIL4t/86qY75kt42HRmV4=";
-        var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
+        
         var tokenHandler = new JwtSecurityTokenHandler();
         var tokenDescriptor = new SecurityTokenDescriptor
         {
@@ -44,9 +47,9 @@ public class AuthController : ControllerBase
                 new Claim(ClaimTypes.Email, user.Email)
             }),
             Expires = DateTime.UtcNow.AddMinutes(60),
-            Issuer = "Oliver",
-            Audience = "Oliver",
-            SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256)
+            Issuer = _configuration.GetValue<string>("Token:Issuer"),
+            Audience = _configuration.GetValue<string>("Token:Audience"),
+            SigningCredentials = _signingCredentials
         };
 
         var token = tokenHandler.CreateToken(tokenDescriptor);
