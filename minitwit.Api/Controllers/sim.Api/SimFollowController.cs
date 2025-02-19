@@ -19,14 +19,12 @@ public class SimFollowController : ControllerBase
 
     [HttpGet("fllws/{username}")]
     public async Task<IActionResult> GetUsersTwits(
-        string username, 
-        [FromBody] string unfollow,
-        [FromBody] string follow)
+        [FromBody] Users user)
     {
         HttpRequest request = HttpContext.Request;
         // The lines below is just for clarity, might want to delete it, and use "unfollow" directly
-        string unfollows_username = unfollow;
-        string follows_username = follow;
+        string unfollow = user.unfollow;
+        string follow = user.follow;
         /* 
            This function should contain the GET part of the 
            correponsing python function "messages_per_user" in
@@ -52,4 +50,6 @@ public class SimFollowController : ControllerBase
 
         throw new NotImplementedException();
     }
+
+    public record Users(string username, string follow, string unfollow);
 }
