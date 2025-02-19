@@ -89,4 +89,11 @@ public class TwitsController : ControllerBase
         // Return the result in JSON format
         return Ok(new { latest = latestProcessedCommandId });
     }
+
+    [HttpGet("msgs")]
+    public async Task<IActionResult> GetMessages([FromQuery] int no = 100)
+    {
+        var messages = await _twitsService.GetMessages(no);
+        return Ok(messages);
+    }
 }

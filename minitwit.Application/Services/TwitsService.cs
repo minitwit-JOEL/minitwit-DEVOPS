@@ -134,4 +134,22 @@ public class TwitsService : ITwitsService
             return -1;
         }
     }
+
+    public async Task<IEnumerable<MessageDto>> GetMessages(int limit = 100)
+    {
+        var messages = await _dbContext.Messages
+            .Where(m => !m.Flagged)
+            .Include(m => m.Author)
+            .OrderByDescending(m => m.CreatedAt)
+            .Take(limit)
+            .Select(m => new MessageDto
+            {
+                Content = m.Text,
+                PubDate = m.CreatedAt,
+                User = m.Author.Username
+            })
+            .ToListAsync();
+
+        return messages;
+    }
 }

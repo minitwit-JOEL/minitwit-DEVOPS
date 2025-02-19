@@ -11,5 +11,6 @@ public interface ITwitsService
     public Task<IEnumerable<Message>> GetUsersTwitsByName(string userName, int page);
     public Task<Message> PostTwit(int userId, string text);
     public Task<int> GetLatestProcessedCommandId();
+    public Task<IEnumerable<MessageDto>> GetMessages(int limit);
 
 }
