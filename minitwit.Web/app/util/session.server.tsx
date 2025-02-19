@@ -4,7 +4,8 @@ import { UserDto } from "~/types/UserDto";
 const sessionStorage = createCookieSessionStorage({
   cookie: {
     name: "__session",
-    secure: process.env.NODE_ENV === "production",
+    //secure: process.env.NODE_ENV === "production",
+    secure: false,
     secrets: ["your-secret-key"],
     sameSite: "lax",
     path: "/",
@@ -30,7 +31,6 @@ export const createUserSession = async (token: string, user: UserDto) => {
   const session = await sessionStorage.getSession();
   session.set("token", token);
   session.set("user", user);
-
   return await sessionStorage.commitSession(session);
 };
 

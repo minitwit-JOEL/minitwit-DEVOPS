@@ -39,7 +39,7 @@ export const action: ActionFunction = async ({ request }) => {
     });
   }
 
-  const response = await fetch("https://localhost:7168/api/auth/register", {
+  const response = await fetch(`${process.env.API_BASE_URL}api/auth/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(registerRequestDto),

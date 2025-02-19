@@ -1,9 +1,21 @@
-# PostgreSQL image as a base
-FROM postgres:latest  
+#Use Node.js image
+FROM node:18-alpine
 
-# environment variables 
-ENV POSTGRES_DB=minitwitDb  
-ENV POSTGRES_USER=root  
-ENV POSTGRES_PASSWORD=root  
+#Set working directory
+WORKDIR /app
 
-EXPOSE 5432
+#Copy package.json and install dependencies
+COPY package*.json ./
+RUN npm install
+
+#Copy the rest of the project files
+COPY . .
+
+#Build the application
+RUN npm run build
+
+#Expose port for the frontend
+EXPOSE 3000
+
+#Start the Remix app
+CMD ["npm", "run", "start"]
