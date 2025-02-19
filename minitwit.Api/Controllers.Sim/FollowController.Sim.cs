@@ -37,7 +37,7 @@ public class FollowControllerSim : ControllerBase
         }
     }
 
-    [HttpPost("flls/{username}")]
+    [HttpPost("fllws/{username}")]
     public async Task<IActionResult> GetUsersTwitsPost(string username, [FromBody] FollowRequest request, [FromQuery] int no = 100)
     {
         if (!_simService.CheckIfRequestFromSimulator(Request))
@@ -52,20 +52,25 @@ public class FollowControllerSim : ControllerBase
                 await _followService.Follow(username, request.Follow);
                 return NoContent();
             }
-            
+
             if (!string.IsNullOrWhiteSpace(request.Unfollow))
             {
                 await _followService.Unfollow(username, request.Unfollow);
                 return NoContent();
             }
-           
-            return BadRequest(new { status = 400, error_msg = "Invalid request: Provide either 'follow' or 'unfollow'." });
+
+            return BadRequest(new
+                { status = 400, error_msg = "Invalid request: Provide either 'follow' or 'unfollow'." });
         }
         catch (ArgumentException)
         {
             return NotFound(new { status = 404, error_msg = "User not found" });
         }
+        catch (InvalidOperationException)
+        {
+            return StatusCode(500);
+        }
     }
     
-    public record FollowRequest(string Follow, string Unfollow);
+    public record FollowRequest(string? Follow, string? Unfollow);
 }

@@ -36,7 +36,7 @@ public class TwitsService : ITwitsService
 
     public async Task<IEnumerable<MessageDto>> GetMessagesForUser(string username, int no)
     {
-        var user = await _dbContext.Users.SingleAsync(u => u.Username == username);
+        var user = await _dbContext.Users.SingleOrDefaultAsync(u => u.Username == username);
         if (user is null)
         {
             throw new ArgumentException("User not found");
@@ -60,7 +60,7 @@ public class TwitsService : ITwitsService
 
     public async Task PostMessagesForUser(string username, string content)
     {
-        var user = await _dbContext.Users.SingleAsync(u => u.Username == username);
+        var user = await _dbContext.Users.SingleOrDefaultAsync(u => u.Username == username);
         if (user is null)
         {
             throw new ArgumentException("User not found");

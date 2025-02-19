@@ -64,14 +64,23 @@ public class TwitsControllerSim : ControllerBase
     }
 
     [HttpPost("msgs/{username}")]
-    public async Task<IActionResult> PostMessageForUser(string username, [FromBody] string content)
+    public async Task<IActionResult> PostMessageForUser(string username, [FromBody] MessageRequest msgRequest)
     {
         if (!_simService.CheckIfRequestFromSimulator(Request))
         {
             return StatusCode(StatusCodes.Status403Forbidden, new { status = 403, error_msg = "You are not authorized to use this resource!" });
         }
-        
-        await _twitsService.PostMessagesForUser(username, content);
-        return NoContent();
+
+        try
+        {
+            await _twitsService.PostMessagesForUser(username, msgRequest.Content);
+            return NoContent();
+        }
+        catch (ArgumentException)
+        {
+            return NotFound(new { status = 404, error_msg = "User not found" });
+        }
     }
+    
+    public record MessageRequest(string Content);
 }
