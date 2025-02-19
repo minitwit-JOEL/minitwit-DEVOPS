@@ -1,5 +1,7 @@
+using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Extensions.Logging;
 using minitwit.Application.Interfaces;
 using minitwit.Domain.Entities;
 using minitwit.Infrastructure.Data;
@@ -26,14 +28,14 @@ public class TwitsService : ITwitsService
             .OrderByDescending(m => m.CreatedAt)
             .ToListAsync();
     }
-    
+
     public async Task<IEnumerable<Message>> GetFeed(int userId, int page)
     {
         var followers = await _dbContext.Followers
             .Where(f => f.WhoId == userId)
             .Select(f => f.WhomId)
             .ToListAsync();
-        
+
         return await _dbContext.Messages
             .Include(m => m.Author)
             .Where(m => !m.Flagged && (m.AuthorId == userId || followers.Contains(m.AuthorId)))
@@ -46,7 +48,7 @@ public class TwitsService : ITwitsService
     public async Task<IEnumerable<Message>> GetUsersTwits(int userId, int page = default)
     {
         var user = await _dbContext.Users.FindAsync(userId);
-        
+
         if (user is null)
         {
             throw new ArgumentException("No user with this id");
@@ -59,7 +61,7 @@ public class TwitsService : ITwitsService
             .Skip(PageSize * page)
             .Take(page)
             .ToListAsync();
-        
+
         return twits;
     }
 
@@ -78,10 +80,10 @@ public class TwitsService : ITwitsService
             //.Skip(PageSize * page)
             //.Take(page)
             .ToListAsync();
-        
+
         return twits;
     }
-    
+
     public async Task<Message> PostTwit(int userId, string text)
     {
         if (string.IsNullOrWhiteSpace(text))
@@ -100,5 +102,36 @@ public class TwitsService : ITwitsService
         await _dbContext.Messages.AddAsync(newMessage);
         await _dbContext.SaveChangesAsync();
         return newMessage;
+    }
+
+    public async Task<int> GetLatestProcessedCommandId()
+    {
+
+        var filePath = "../latest_processed_sim_action_id.txt";
+
+        try
+        {
+            // Read the file content
+            var content = await File.ReadAllTextAsync(filePath);
+
+            content = content.Trim();
+
+            // Try parsing the content to integer
+            if (int.TryParse(content, out int latestProcessedCommandId))
+            {
+                return latestProcessedCommandId;
+            }
+            else
+            {
+                Console.Error.WriteLine($"Error: File content '{content}' is not a valid integer.");
+                return -1; // Return -1 if the file content is not a valid integer
+            }
+        }
+        catch (Exception e)
+        {
+            // Return -1 in case of any error, e.g., file not found or invalid format
+            Console.Error.WriteLine($"Error: An unexpected exception occurred - {e.Message}");
+            return -1;
+        }
     }
 }

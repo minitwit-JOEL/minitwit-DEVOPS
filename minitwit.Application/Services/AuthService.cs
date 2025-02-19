@@ -16,7 +16,7 @@ public class AuthService : IAuthService
     {
         _dbContext = dbContext;
     }
-    
+
     public async Task<User?> Login(string username, string password)
     {
         var user = await _dbContext.Users
@@ -28,7 +28,7 @@ public class AuthService : IAuthService
                 email = u.Email,
             })*/
             .FirstAsync();
-        
+
         /*var utf8 = new UTF8Encoding();
         var sha1 = SHA1.Create();
         var hash = utf8.GetString(sha1.ComputeHash(utf8.GetBytes(password)));
@@ -37,7 +37,7 @@ public class AuthService : IAuthService
         {
             throw new UnauthorizedAccessException("Invalid username or password");
         }*/
-        
+
         return user;
     }
 

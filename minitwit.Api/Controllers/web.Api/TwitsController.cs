@@ -10,7 +10,7 @@ namespace minitwit.Controllers;
 public class TwitsController : ControllerBase
 {
     private readonly ITwitsService _twitsService;
-    
+
     public TwitsController(ITwitsService twitsService)
     {
         _twitsService = twitsService;
@@ -23,7 +23,7 @@ public class TwitsController : ControllerBase
 
         return Ok(twits);
     }
-    
+
     [HttpGet("feed")]
     public async Task<IActionResult> GetPrivateTwits([FromQuery] int page = default)
     {
@@ -38,7 +38,7 @@ public class TwitsController : ControllerBase
                 twits = publicTwits
             });
         }
-        
+
         var privateTwits = await _twitsService.GetFeed(int.Parse(userId), page);
 
         return Ok(new
@@ -58,18 +58,18 @@ public class TwitsController : ControllerBase
         {
             return Unauthorized("User is not logged in");
         }
-        
+
         var twits = await _twitsService.GetUsersTwitsByName(authorName, page);
-        
+
         return Ok(twits);
     }
-    
+
     [Authorize]
     [HttpPost]
     public async Task<IActionResult> PostTwit([FromBody] string message)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        
+
         if (string.IsNullOrEmpty(userId) || !int.TryParse(userId, out var parsedUserId))
         {
             return Unauthorized("User was not logged in");
@@ -78,5 +78,15 @@ public class TwitsController : ControllerBase
         var twit = await _twitsService.PostTwit(parsedUserId, message);
 
         return Ok(twit);
+    }
+
+    [HttpGet("latest")]
+    public async Task<IActionResult> GetLatestProcessedCommandId()
+    {
+        // Call the service to get the latest processed command ID
+        var latestProcessedCommandId = await _twitsService.GetLatestProcessedCommandId();
+
+        // Return the result in JSON format
+        return Ok(new { latest = latestProcessedCommandId });
     }
 }

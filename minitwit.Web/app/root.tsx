@@ -66,12 +66,14 @@ function PageLayout() {
           <div>
             <Link to={"/timeline"}>my timeline</Link> |{" "}
             <Link to={"/timeline/public"}>public timeline</Link> |{" "}
+            <Link to={"/latest"}>Latest Processed Command</Link> |{" "}
             <Link to={"/logout"} onClick={handleLogout}>sign out</Link>
           </div>
         ) : (
           <div>
             <Link to={"/timeline/public"}>public timeline</Link> |{" "}
             <Link to={"/register"}>sign up</Link> |{" "}
+            <Link to={"/latest"}>Latest Processed Command</Link> |{" "}
             <Link to={"/login"}>sign in</Link>
           </div>
         )}
