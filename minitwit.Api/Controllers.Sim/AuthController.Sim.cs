@@ -17,9 +17,9 @@ public class AuthControllerSim : ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] RegisterRequest request)
+    public async Task<IActionResult> Register([FromBody] RegisterRequest request, [FromQuery] int latest = -1)
     {
-        var result = await _authService.Register(request.Username, request.Email, request.Password);
+        var result = await _authService.Register(latest, request.Username, request.Email, request.Password);
 
         if (!result.IsSuccess)
         {

@@ -5,6 +5,6 @@ namespace minitwit.Application.Interfaces.Sim;
 
 public interface ISimService {
     public Task<int> GetLatestProcessedCommandId();
-    public Task<IActionResult> UpdateLatest(HttpRequest request);
+    public Task UpdateLatest(int newProcessedId);
     public bool CheckIfRequestFromSimulator(HttpRequest request);
 }

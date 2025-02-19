@@ -4,5 +4,5 @@ namespace minitwit.Application.Interfaces.Sim;
 
 public interface IAuthService
 {
-    public Task<Result> Register(string username, string email, string password);
+    public Task<Result> Register(int latest, string username, string email, string password);
 }

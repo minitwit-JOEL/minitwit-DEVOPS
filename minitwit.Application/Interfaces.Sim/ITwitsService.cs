@@ -5,7 +5,7 @@ namespace minitwit.Application.Interfaces.Sim;
 
 public interface ITwitsService
 {
-    public Task<IEnumerable<MessageDto>> GetMessages(int limit);
-    public Task<IEnumerable<MessageDto>> GetMessagesForUser(string username, int noMsgs);
-    public Task PostMessagesForUser(string username, string content);
+    public Task<IEnumerable<MessageDto>> GetMessages(int latest, int limit);
+    public Task<IEnumerable<MessageDto>> GetMessagesForUser(int latest, string username, int noMsgs);
+    public Task PostMessagesForUser(int latest, string username, string content);
 }

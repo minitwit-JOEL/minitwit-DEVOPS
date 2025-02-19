@@ -19,7 +19,7 @@ public class FollowControllerSim : ControllerBase
     }
 
     [HttpGet("fllws/{username}")]
-    public async Task<IActionResult> GetFollowerNames(string username, [FromQuery] int no = 100)
+    public async Task<IActionResult> GetFollowerNames(string username, [FromQuery] int latest, [FromQuery] int no = 100)
     {
         if (!_simService.CheckIfRequestFromSimulator(Request))
         {
@@ -28,7 +28,7 @@ public class FollowControllerSim : ControllerBase
 
         try
         {
-            var followerNames = await _followService.GetFollowerNames(username, no);
+            var followerNames = await _followService.GetFollowerNames(latest, username, no);
         
             return Ok(new { follows = followerNames });
         } catch (ArgumentException)
@@ -38,7 +38,7 @@ public class FollowControllerSim : ControllerBase
     }
 
     [HttpPost("fllws/{username}")]
-    public async Task<IActionResult> GetUsersTwitsPost(string username, [FromBody] FollowRequest request, [FromQuery] int no = 100)
+    public async Task<IActionResult> GetUsersTwitsPost(string username, [FromBody] FollowRequest request, [FromQuery] int latest, [FromQuery] int no = 100)
     {
         if (!_simService.CheckIfRequestFromSimulator(Request))
         {
@@ -49,13 +49,13 @@ public class FollowControllerSim : ControllerBase
         {
             if (!string.IsNullOrWhiteSpace(request.Follow))
             {
-                await _followService.Follow(username, request.Follow);
+                await _followService.Follow(latest, username, request.Follow);
                 return NoContent();
             }
 
             if (!string.IsNullOrWhiteSpace(request.Unfollow))
             {
-                await _followService.Unfollow(username, request.Unfollow);
+                await _followService.Unfollow(latest, username, request.Unfollow);
                 return NoContent();
             }
 

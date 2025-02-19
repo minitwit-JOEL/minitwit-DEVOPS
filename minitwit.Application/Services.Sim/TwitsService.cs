@@ -10,14 +10,18 @@ namespace minitwit.Application.Services.Sim;
 public class TwitsService : ITwitsService
 {
     private readonly ApplicationDbContext _dbContext;
+    private readonly ISimService _simService;
 
-    public TwitsService(ApplicationDbContext dbContext)
+    public TwitsService(ApplicationDbContext dbContext, ISimService simService)
     {
         _dbContext = dbContext;
+        _simService = simService;
     }
     
-    public async Task<IEnumerable<MessageDto>> GetMessages(int limit = 100)
+    public async Task<IEnumerable<MessageDto>> GetMessages(int latest, int limit = 100)
     {
+        await _simService.UpdateLatest(latest);
+        
         var messages = await _dbContext.Messages
             .Where(m => !m.Flagged)
             .Include(m => m.Author)
@@ -34,8 +38,10 @@ public class TwitsService : ITwitsService
         return messages;
     }
 
-    public async Task<IEnumerable<MessageDto>> GetMessagesForUser(string username, int no)
+    public async Task<IEnumerable<MessageDto>> GetMessagesForUser(int latest, string username, int no)
     {
+        await _simService.UpdateLatest(latest);
+        
         var user = await _dbContext.Users.SingleOrDefaultAsync(u => u.Username == username);
         if (user is null)
         {
@@ -58,8 +64,10 @@ public class TwitsService : ITwitsService
         return messages;
     }
 
-    public async Task PostMessagesForUser(string username, string content)
+    public async Task PostMessagesForUser(int latest, string username, string content)
     {
+        await _simService.UpdateLatest(latest);
+        
         var user = await _dbContext.Users.SingleOrDefaultAsync(u => u.Username == username);
         if (user is null)
         {

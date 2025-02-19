@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using minitwit.Application.Interfaces.Sim;
+using minitwit.Domain.Entities;
 using minitwit.Infrastructure.Data;
 
 namespace minitwit.Application.Services.Sim;
@@ -15,31 +17,18 @@ public class SimService : ISimService
     }
     public async Task<int> GetLatestProcessedCommandId()
     {
-        const string filePath = "../latest_processed_sim_action_id.txt";
-
-        try
-        {
-            var content = await File.ReadAllTextAsync(filePath);
-
-            content = content.Trim();
-
-            if (int.TryParse(content, out var latestProcessedCommandId))
-            {
-                return latestProcessedCommandId;
-            }
-        }
-        catch
-        {
-            return -1;
-        }
-
-        return -1;
+        var lastProcessedId = await _dbContext.ProcessedActions.OrderByDescending(p => p.Id).FirstOrDefaultAsync();
+        
+        return lastProcessedId?.ProcessId ?? -1;
     }
 
-    public Task<IActionResult> UpdateLatest(HttpRequest request)
+    public async Task UpdateLatest(int newProcessedId)
     {
-        
-        throw new NotImplementedException();
+        await _dbContext.ProcessedActions.AddAsync(new ProcessedAction
+        {
+            ProcessId = newProcessedId
+        });
+        await _dbContext.SaveChangesAsync();
     }
 
     public bool CheckIfRequestFromSimulator(HttpRequest request)

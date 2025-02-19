@@ -9,14 +9,18 @@ namespace minitwit.Application.Services.Sim;
 public class FollowService : IFollowService
 {
     private readonly ApplicationDbContext _dbContext;
+    private readonly ISimService _simService;
 
-    public FollowService(ApplicationDbContext dbContext)
+    public FollowService(ApplicationDbContext dbContext, ISimService simService)
     {
         _dbContext = dbContext;
+        _simService = simService;
     }
 
-    public async Task<IEnumerable<string>> GetFollowerNames(string username, int no)
+    public async Task<IEnumerable<string>> GetFollowerNames(int latest, string username, int no)
     {
+        await _simService.UpdateLatest(latest);
+        
         var user = await _dbContext.Users.SingleOrDefaultAsync(u => u.Username == username);
         if (user is null)
         {
@@ -36,8 +40,10 @@ public class FollowService : IFollowService
         return followerNames;
     }
 
-    public async Task Follow(string username, string followerName)
+    public async Task Follow(int latest, string username, string followerName)
     {
+        await _simService.UpdateLatest(latest);
+        
         var user = await _dbContext.Users.SingleOrDefaultAsync(u => u.Username == username);
         if (user == null)
         {
@@ -56,8 +62,10 @@ public class FollowService : IFollowService
         await _dbContext.SaveChangesAsync();
     }
 
-    public async Task Unfollow(string username, string followerName)
+    public async Task Unfollow(int latest, string username, string followerName)
     {
+        await _simService.UpdateLatest(latest);
+        
         var user = await _dbContext.Users.SingleOrDefaultAsync(u => u.Username == username);
         if (user is null)
         {
