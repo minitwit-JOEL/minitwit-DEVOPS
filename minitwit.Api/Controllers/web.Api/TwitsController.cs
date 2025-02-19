@@ -96,4 +96,66 @@ public class TwitsController : ControllerBase
         var messages = await _twitsService.GetMessages(no);
         return Ok(messages);
     }
+
+
+    [HttpGet("msgs/{username}")]
+    public async Task<IActionResult> GetMessagesForUser(string username, [FromQuery] int noMsgs = 100)
+    {
+        try
+        {
+            // Get messages for the user from the service
+            var messages = await _twitsService.GetMessagesForUser(username, noMsgs);
+
+            // Return the list of messages
+            return Ok(messages);
+        }
+        catch (ArgumentException)
+        {
+            // If user not found, return 404
+            return NotFound("User not found");
+        }
+        catch (Exception)
+        {
+            // Handle other unexpected errors
+            return StatusCode(500, "An unexpected error occurred");
+        }
+    }
+
+    [Authorize]
+    [HttpPost("msgs/{username}")]
+    public async Task<IActionResult> PostMessageForUser(string username, [FromBody] string content)
+    {
+        try
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userId) || !int.TryParse(userId, out var parsedUserId))
+            {
+                return Unauthorized("User is not logged in");
+            }
+
+            // Ensure that the logged-in user is the same as the one in the URL
+            if (username != User.FindFirstValue(ClaimTypes.Name))
+            {
+                return Unauthorized("You can only post messages as yourself");
+            }
+
+            // Call the service to post the message for the user
+            await _twitsService.PostMessagesForUser(username, content);
+
+            // Return 204 No Content on successful post
+            return NoContent();
+        }
+        catch (ArgumentException)
+        {
+            // If user not found, return 404
+            return NotFound("User not found");
+        }
+        catch (Exception)
+        {
+            // Handle other unexpected errors
+            return StatusCode(500, "An unexpected error occurred");
+        }
+    }
+
 }

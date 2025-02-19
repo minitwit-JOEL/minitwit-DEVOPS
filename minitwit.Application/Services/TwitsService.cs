@@ -152,4 +152,47 @@ public class TwitsService : ITwitsService
 
         return messages;
     }
+
+    public async Task<IEnumerable<MessageDto>> GetMessagesForUser(string username, int noMsgs)
+    {
+        var user = await _dbContext.Users.SingleOrDefaultAsync(u => u.Username == username);
+        if (user == null)
+        {
+            throw new ArgumentException("User not found");
+        }
+
+        var messages = await _dbContext.Messages
+            .Include(m => m.Author)
+            .Where(m => m.AuthorId == user.Id && !m.Flagged)
+            .OrderByDescending(m => m.CreatedAt)
+            .Take(noMsgs)
+            .ToListAsync();
+
+        return messages.Select(m => new MessageDto
+        {
+            Content = m.Text,
+            PubDate = m.CreatedAt,
+            User = m.Author.Username
+        });
+    }
+
+    public async Task PostMessagesForUser(string username, string content)
+    {
+        var user = await _dbContext.Users.SingleOrDefaultAsync(u => u.Username == username);
+        if (user == null)
+        {
+            throw new ArgumentException("User not found");
+        }
+
+        var newMessage = new Message
+        {
+            AuthorId = user.Id,
+            Text = content,
+            CreatedAt = DateTime.UtcNow,
+            Flagged = false
+        };
+
+        await _dbContext.Messages.AddAsync(newMessage);
+        await _dbContext.SaveChangesAsync();
+    }
 }
