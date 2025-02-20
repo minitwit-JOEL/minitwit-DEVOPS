@@ -23,7 +23,6 @@ public class AuthController : ControllerBase
         _authService = authService;
         _configuration = configuration;
         var jwtKey = configuration.GetValue<string>("Token:Key");
-        Console.WriteLine(jwtKey + " Hej");
         var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
         _signingCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
     }
