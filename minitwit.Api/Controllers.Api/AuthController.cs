@@ -8,7 +8,7 @@ using minitwit.Application.Interfaces;
 using LoginRequest = minitwit.Infrastructure.Dtos.Requests.LoginRequest;
 using RegisterRequest = minitwit.Infrastructure.Dtos.Requests.RegisterRequest;
 
-namespace minitwit.Controllers;
+namespace minitwit.Controllers.Api;
 
 [ApiController]
 [Route("api/auth")]

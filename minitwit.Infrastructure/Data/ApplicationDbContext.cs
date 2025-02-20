@@ -9,6 +9,8 @@ public class ApplicationDbContext : DbContext
     public DbSet<Message> Messages { get; set; }
     public DbSet<Follow> Followers { get; set; }
     
+    public DbSet<ProcessedAction> ProcessedActions { get; set; }
+    
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
     { }
