@@ -8,17 +8,17 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 # Copy only the project files first to leverage layer caching.
-COPY ["minitwit.Api/minitwit.Api.csproj", "minitwit.Api/"]
-COPY ["minitwit.Application/minitwit.Application.csproj", "minitwit.Application/"]
-COPY ["minitwit.Domain/minitwit.Domain.csproj", "minitwit.Domain/"]
-COPY ["minitwit.Infrastructure/minitwit.Infrastructure.csproj", "minitwit.Infrastructure/"]
+COPY ["src/minitwit.Api/minitwit.Api.csproj", "minitwit.Api/"]
+COPY ["src/minitwit.Application/minitwit.Application.csproj", "minitwit.Application/"]
+COPY ["src/minitwit.Domain/minitwit.Domain.csproj", "minitwit.Domain/"]
+COPY ["src/minitwit.Infrastructure/minitwit.Infrastructure.csproj", "minitwit.Infrastructure/"]
 
 # Restore dependencies
 RUN dotnet restore "minitwit.Api/minitwit.Api.csproj"
 
 # Copy the rest of the source code
 COPY . .
-WORKDIR "/src/minitwit.Api"
+WORKDIR "/src/src/minitwit.Api"
 RUN dotnet build "minitwit.Api.csproj" -c Release -o /app/build
 
 # Publish stage

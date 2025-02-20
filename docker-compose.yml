@@ -15,7 +15,7 @@ services:
   minitwit-api:
     build:
       context: .
-      dockerfile: ./minitwit.Api/Dockerfile
+      dockerfile: ./src/minitwit.Api/Dockerfile
     depends_on:
       - db
     environment:
@@ -25,7 +25,7 @@ services:
 
   web:
     build:
-      context: ./minitwit.Web
+      context: ./src/minitwit.Web
       dockerfile: Dockerfile
     container_name: minitwit-web
     depends_on:

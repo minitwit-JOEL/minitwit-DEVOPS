@@ -21,7 +21,9 @@ public class AuthController : ControllerBase
     public AuthController(IConfiguration configuration, IAuthService authService)
     {
         _authService = authService;
-        var jwtKey = _configuration.GetValue<string>("Token:Key");
+        _configuration = configuration;
+        var jwtKey = configuration.GetValue<string>("Token:Key");
+        Console.WriteLine(jwtKey + " Hej");
         var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
         _signingCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
     }
