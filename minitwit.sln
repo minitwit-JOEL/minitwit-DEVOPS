@@ -2,13 +2,13 @@
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minitwit.Api", "minitwit.Api\minitwit.Api.csproj", "{8A4FC43D-C8FD-441B-9BEF-BCCD84124AB3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minitwit.Api", "src\minitwit.Api\minitwit.Api.csproj", "{8A4FC43D-C8FD-441B-9BEF-BCCD84124AB3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minitwit.Infrastructure", "minitwit.Infrastructure\minitwit.Infrastructure.csproj", "{E78511DA-3736-4B24-960E-CA243B250C3D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minitwit.Infrastructure", "src\minitwit.Infrastructure\minitwit.Infrastructure.csproj", "{E78511DA-3736-4B24-960E-CA243B250C3D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minitwit.Application", "minitwit.Application\minitwit.Application.csproj", "{FB438B94-C14E-48DE-B480-9F6284617617}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minitwit.Application", "src\minitwit.Application\minitwit.Application.csproj", "{FB438B94-C14E-48DE-B480-9F6284617617}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minitwit.Domain", "minitwit.Domain\minitwit.Domain.csproj", "{1FBD076D-0278-40A7-BA6C-464FC6AF7C1E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "minitwit.Domain", "src\minitwit.Domain\minitwit.Domain.csproj", "{1FBD076D-0278-40A7-BA6C-464FC6AF7C1E}"
 EndProject
 Global
 	GlobalSection(SolutionProperties) = preSolution
