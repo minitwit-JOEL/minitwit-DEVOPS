@@ -58,9 +58,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("jg4mywvyYnFJgJhLT+6AmMllIL4t/86qY75kt42HRmV4=")),
-            ValidateIssuer = false, 
-            ValidateAudience = false,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration.GetValue<string>("Token:Key"))),
+            ValidateIssuer = builder.Configuration.GetValue<bool>("Token:Issuer"), 
+            ValidateAudience = builder.Configuration.GetValue<bool>("Token:Audience"),
             ValidateLifetime = true,
             ClockSkew = TimeSpan.Zero 
         };
@@ -75,13 +75,18 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
     app.UseHsts();
+    app.UseCors("DevelopmentOrigins");
+}
+else
+{
+    app.UseCors("DevelopmentOrigins");
 }
 
 app.UseHttpsRedirection();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseCors("DevelopmentOrigins");
+
 app.UseCookiePolicy(new CookiePolicyOptions
 {
     MinimumSameSitePolicy = SameSiteMode.Lax
