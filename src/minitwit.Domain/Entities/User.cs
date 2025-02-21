@@ -6,5 +6,8 @@ public class User
     public string Username { get; set; } = default!;
     public string Email { get; set; } = default!;
     public string PasswordHash { get; set; } = default!;
+    
+    public string Salt { get; set; } = default!;
+    
     public virtual ICollection<User> Follows { get; set; } = new List<User>();
 }

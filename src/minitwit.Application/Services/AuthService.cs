@@ -21,22 +21,12 @@ public class AuthService : IAuthService
     {
         var user = await _dbContext.Users
             .Where(u => u.Username == username)
-            /*.Select(u => new
-            {
-                id = u.Id,
-                username = u.Username,
-                email = u.Email,
-            })*/
             .FirstAsync();
-
-        /*var utf8 = new UTF8Encoding();
-        var sha1 = SHA1.Create();
-        var hash = utf8.GetString(sha1.ComputeHash(utf8.GetBytes(password)));
         
-        if (hash != user.PasswordHash)
+        if (user == null || !BCrypt.Net.BCrypt.Verify(password + user.Salt, user.PasswordHash))
         {
             throw new UnauthorizedAccessException("Invalid username or password");
-        }*/
+        }
 
         return user;
     }
@@ -61,21 +51,21 @@ public class AuthService : IAuthService
         {
             error = "The two passwords do not match";
         }
-        /*else if (_dbService.get_user_id(username) != null)
+        else if (await _dbContext.Users.AnyAsync(u => u.Username == username))
         {
             error = "The username is already taken";
-        }*/
+        }
 
         if (error != null)
         {
             throw new ArgumentException(error);
         }
+        
+        var salt = BCrypt.Net.BCrypt.GenerateSalt();
+        var hashedPassword = BCrypt.Net.BCrypt.HashPassword(password + salt, 10);
 
-        //var utf8 = new UTF8Encoding();
-        //var passwordHash = utf8.GetString(SHA1.HashData(utf8.GetBytes(password)));
-
-        var user = new User { Username = username, Email = email, PasswordHash = password };
-
+        var user = new User { Username = username, Email = email, PasswordHash = hashedPassword, Salt = salt };
+        Console.WriteLine("Password: " + password + " - HashedPassword: " + hashedPassword);
         await _dbContext.Users.AddAsync(user);
         await _dbContext.SaveChangesAsync();
 
