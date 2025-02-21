@@ -225,4 +225,15 @@ AppPackages/
 # End of core ignore list, below put you custom 'per project' settings (patterns or path)
 #####
 
+# Custom ignore rules for C# appsettings and environment files
+
+# Ignore environment-specific appsettings files (e.g. appsettings.Development.json)
+appsettings.*.json
+appsettings.json
+# Ignore files with '-env' in their names (e.g. production-env.json, local-env.config)
+*-env.*
+
+# Optionally, uncomment the following line if you want to ignore the default appsettings.json as well
+# appsettings.json
+
 .secrets
