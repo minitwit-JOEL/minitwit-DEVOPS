@@ -229,7 +229,7 @@ AppPackages/
 
 # Ignore environment-specific appsettings files (e.g. appsettings.Development.json)
 appsettings.*.json
-
+appsettings.json
 # Ignore files with '-env' in their names (e.g. production-env.json, local-env.config)
 *-env.*
 
