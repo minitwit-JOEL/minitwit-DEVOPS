@@ -4,7 +4,7 @@ using minitwit.Application.Interfaces.Sim;
 namespace minitwit.Controllers.Sim;
 
 [ApiController]
-[Route("/")]
+[Route("/api/sim")]
 public class SimController : ControllerBase
 {
     private readonly ISimService _simService;

@@ -6,7 +6,7 @@ using IAuthService = minitwit.Application.Interfaces.Sim.IAuthService;
 namespace minitwit.Controllers.Sim;
 
 [ApiController]
-[Route("/")]
+[Route("/api/sim")]
 public class AuthControllerSim : ControllerBase
 {
     private readonly IAuthService _authService;

@@ -8,7 +8,7 @@ using ITwitsService = minitwit.Application.Interfaces.Sim.ITwitsService;
 namespace minitwit.Controllers.Sim;
 
 [ApiController]
-[Route("/")]
+[Route("/api/sim")]
 public class TwitsControllerSim : ControllerBase
 {
     private readonly ITwitsService _twitsService;
