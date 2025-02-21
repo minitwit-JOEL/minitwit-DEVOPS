@@ -41,7 +41,7 @@ public class AuthService : IAuthService
             return Result.Failure("The username is already taken");
         }
         
-        var user = new User { Username = username, Email = email, PasswordHash = password };
+        var user = new User { Username = username, Email = email, PasswordHash = password, Salt = "" };
 
         await _dbContext.Users.AddAsync(user);
         await _dbContext.SaveChangesAsync();
