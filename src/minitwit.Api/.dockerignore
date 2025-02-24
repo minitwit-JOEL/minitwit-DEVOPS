@@ -6,3 +6,5 @@
 .git
 .gitignore
 *.local.json
+appsettings.*.json
+appsettings.json
