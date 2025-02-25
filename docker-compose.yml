@@ -16,6 +16,7 @@ services:
     build:
       context: .
       dockerfile: ./src/minitwit.Api/Dockerfile
+    container_name: minitwit-api
     depends_on:
       - db
     environment:
