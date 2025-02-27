@@ -6,7 +6,7 @@ using IFollowService = minitwit.Application.Interfaces.Sim.IFollowService;
 namespace minitwit.Controllers.Sim;
 
 [ApiController]
-[Route("/api/sim")]
+[Route("api/sim")]
 public class FollowControllerSim : ControllerBase
 {
     private readonly IFollowService _followService;
