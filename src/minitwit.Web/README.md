@@ -38,16 +38,3 @@ Make sure to deploy the output of `npm run build`
 ## Styling
 
 This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever css framework you prefer. See the [Vite docs on css](https://vitejs.dev/guide/features.html#css) for more information.
-
-
-## Test simulators with bash script
-
-The bash script can be used to both test the simulator in development (localhost) and in production.
-
-To test development, when standing in the root folder:
-
-`./tests/test_sim_api.sh`
-
-To test production, when standing in the root folder:
-
-`./tests/test_sim_api.sh --production`
