@@ -2,6 +2,7 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using minitwit.Application.Interfaces;
 using minitwit.Application.Interfaces.Sim;
@@ -14,6 +15,7 @@ using IAuthService = minitwit.Application.Interfaces.IAuthService;
 using IFollowService = minitwit.Application.Interfaces.IFollowService;
 using ITwitsService = minitwit.Application.Interfaces.ITwitsService;
 using TwitsService = minitwit.Application.Services.TwitsService;
+using minitwit.Infrastructure.Dtos.Sim;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,6 +40,8 @@ builder.Services.AddScoped<minitwit.Application.Interfaces.Sim.IAuthService, min
 builder.Services.AddScoped<minitwit.Application.Interfaces.Sim.IFollowService, minitwit.Application.Services.Sim.FollowService>();
 builder.Services.AddScoped<minitwit.Application.Interfaces.Sim.ITwitsService, minitwit.Application.Services.Sim.TwitsService>();
 builder.Services.AddScoped<ISimService, SimService>();
+
+builder.Services.Configure<SimApiAccess>(builder.Configuration.GetSection("SimApiAccess"));
 
 builder.Services.AddControllers();
 builder.Services.AddCors(options =>
@@ -67,6 +71,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ClockSkew = TimeSpan.Zero 
         };
     });
+
 
 builder.Services.AddAuthorization();
 
