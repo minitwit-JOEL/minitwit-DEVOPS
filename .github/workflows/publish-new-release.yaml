@@ -1,0 +1,27 @@
+name: Publish
+
+on:
+  push:
+    branches: [ main ]
+    tags: ['v.*.*.*', 'V.*.*.*' ]
+
+permission:
+  contents: write
+
+jobs:
+  release:
+  runs-on: ubuntu-latest
+
+  steps:
+    - name: Build web server
+    
+
+
+    - name: Build API server
+
+
+
+    - name: Zip files
+
+
+    - name: Publish files
