@@ -2,9 +2,9 @@
 
 # Base URL and common headers
 if [ $1 == "--production" ]; then
-  BASE_URL="http://68.183.67.68:8080/api/sim"
+  BASE_URL="http://67.207.72.167:8080/api/sim"
 else 
-  BASE_URL="https://localhost:8080/api/sim"
+  BASE_URL="http://localhost:8080/api/sim"
 fi
 AUTH="Authorization: Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh"
 CONTENT_TYPE="Content-Type: application/json"
