@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using minitwit.Application.Interfaces;
+using minitwit.Domain.Entities;
 
 namespace minitwit.Controllers.Api;
 
@@ -20,8 +21,12 @@ public class TwitsController : ControllerBase
     public async Task<IActionResult> GetPublicTwits([FromQuery] int page = default)
     {
         var twits = await _twitsService.GetPublicTimeline(page);
-
-        return Ok(twits);
+        var pagination = await _twitsService.GetPaginationResponse(page);
+        return Ok(new Temp()
+        {
+            Data = twits.ToArray(),
+            Pagination = pagination
+        });
     }
 
     [HttpGet("feed")]

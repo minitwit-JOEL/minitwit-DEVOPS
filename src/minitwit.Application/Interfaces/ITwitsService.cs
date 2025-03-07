@@ -10,4 +10,6 @@ public interface ITwitsService
     public Task<IEnumerable<Message>> GetUsersTwits(int userId, int page);
     public Task<IEnumerable<Message>> GetUsersTwitsByName(string userName, int page);
     public Task<Message> PostTwit(int userId, string text);
+
+    public Task<PaginationResponse> GetPaginationResponse(int page);
 }
