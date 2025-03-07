@@ -7,7 +7,7 @@ on:
 
 jobs:
   tests:
-    uses: ./.github/workflows/build_and_test.yml
+    uses: ./.github/workflows/build_and_test.yaml
 
   release:
     needs: ["tests"]
