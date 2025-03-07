@@ -48,11 +48,7 @@ public class TwitsControllerSim : ControllerBase
         }
         catch (ArgumentException)
         {
-            return NotFound(new { status = 404, error_msg = "User not found" });
-        }
-        catch (Exception)
-        {
-            return StatusCode(500, "An unexpected error occurred");
+            return NotFound();
         }
     }
 
