@@ -1,3 +1,5 @@
+import { Message } from "~/types/Message";
+
 export interface PaginationData {
     pageSize: number;
     total: number;
@@ -6,6 +8,6 @@ export interface PaginationData {
 }
 
 export interface PaginationResponse {
-    data: any[];
+    data: Message[];
     pagination: PaginationData;
 }
