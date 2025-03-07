@@ -1,5 +1,6 @@
 name: build_and_test
 on: 
+  workflow_dispatch:
   workflow_call: 
   push:
     branches: [ main, develop ]
