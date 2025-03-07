@@ -5,6 +5,9 @@ on:
     branches: [ main ]
     tags: ['v.*.*.*', 'V.*.*.*' ]
 
+permission:
+  contents: write
+
 jobs:
   tests:
     uses: ./.github/workflows/build_and_test.yaml
