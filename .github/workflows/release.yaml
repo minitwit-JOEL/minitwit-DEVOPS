@@ -3,7 +3,7 @@ name: Release
 on:
   workflow_dispatch:
   push:
-    branches: [ main ]
+    branches: [ main, actualYmlFiles ]
     tags: ['v.*.*.*', 'V.*.*.*' ]
 
 jobs:
@@ -35,7 +35,7 @@ jobs:
           do
             release_os="minitwit-${tag}-${release}"
             dotnet publish minitwit.Api.csproj \
-              --framework net7.0 \
+              --framework net8.0 \
               --runtime "$release" \
               -c Release \
               -o "$release_os" \
