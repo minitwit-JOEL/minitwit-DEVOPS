@@ -1,0 +1,24 @@
+name: build_and_test
+on: 
+  workflow_dispatch:
+  workflow_call: 
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 8.0.*
+    - name: Restore dependencies
+      run: dotnet restore src/minitwit.Api
+    - name: Build
+      run: dotnet build src/minitwit.Api --no-restore
+    - name: Test
+      run: dotnet test tests/minitwit.tests --no-build --verbosity normal
