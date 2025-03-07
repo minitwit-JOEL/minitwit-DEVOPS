@@ -106,11 +106,11 @@ public class TwitsService : ITwitsService
         return newMessage;
     }
 
-    public async Task<PaginationResponse> GetPaginationResponse(int page)
+    public async Task<PaginationData> GetPaginationResponse(int page)
     {
         var total = await _dbContext.Messages.CountAsync();
 
-        return new PaginationResponse
+        return new PaginationData
         {
             PageSize = PageSize,
             Total = total,

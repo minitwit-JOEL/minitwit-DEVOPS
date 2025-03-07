@@ -2,7 +2,7 @@
 using System.Dynamic;
 using minitwit.Domain.Entities;
 
-public class PaginationResponse
+public class PaginationData
 {
     public int PageSize = 50;
 
@@ -11,9 +11,9 @@ public class PaginationResponse
     public int CurrentPage { get; set; }
 }
 
-public class Temp
+public class PaginationResponse
 {
-    public Message[] Data { get; set; }
-    public PaginationResponse Pagination { get; set; }
+    public IEnumerable<Message>? Data { get; set; }
+    public PaginationData? Pagination { get; set; }
 }
 

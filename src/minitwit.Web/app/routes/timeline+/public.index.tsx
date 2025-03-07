@@ -5,11 +5,12 @@ import Feed from "~/routes/timeline+/component/feed";
 
 export interface LoaderData {
   messages: Message[];
+  
 }
 
 export const loader: LoaderFunction = async () => {
   const messagesResponse = await fetch(
-    `${process.env.API_BASE_URL}api/twit/public`,
+    `${process.env.API_BASE_URL}api/twit/public?page=0`,
     {
       method: "GET",
       headers: {

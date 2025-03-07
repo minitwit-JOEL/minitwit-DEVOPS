@@ -80,14 +80,6 @@ function PageLayout() {
       <div className="body">
         <Outlet />
       </div>
-      
-      //get number of twits and divide by pagesize, then display the number of pages
-
-      <div className="pagination">
-        <Link to={"/timeline?page=1"}>1</Link> | {" "}
-        <Link to={"/timeline?page=2"}>2</Link> | {" "}
-        <Link to={"/timeline?page=3"}>3</Link> 
-      </div>
 
       <div className="footer">MiniTwit &mdash; A C# Application</div>
     </div>

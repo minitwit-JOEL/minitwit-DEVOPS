@@ -22,9 +22,9 @@ public class TwitsController : ControllerBase
     {
         var twits = await _twitsService.GetPublicTimeline(page);
         var pagination = await _twitsService.GetPaginationResponse(page);
-        return Ok(new Temp()
+        return Ok(new PaginationResponse()
         {
-            Data = twits.ToArray(),
+            Data = twits,
             Pagination = pagination
         });
     }
