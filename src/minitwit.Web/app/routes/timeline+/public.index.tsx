@@ -11,7 +11,6 @@ export const loader: LoaderFunction = async ({ request }) => {
   const url = new URL(request.url);
   const page = Number(url.searchParams.get("page") || "0");  
 
-  // Fetch data based on page, including page=0 (backend should handle this correctly)
   const response = await fetch(
     `${process.env.API_BASE_URL}api/twit/public?page=${page}`,
     {
@@ -32,11 +31,10 @@ export default function PublicTimelinePage() {
   const [searchParams] = useSearchParams();
   const currentPage = Number(searchParams.get("page") || "0");  
   const totalPages = pagination.pagination.totalPages;
-  const prevPage = Math.max(0, currentPage - 1); // Ensure prev doesn't go below 0
-  const nextPage = Math.min(totalPages - 1, currentPage + 1); // Ensure next doesn't exceed totalPages - 1
+  const prevPage = Math.max(0, currentPage - 1); 
+  const nextPage = Math.min(totalPages - 1, currentPage + 1); 
   const maxButtons = 6;
 
-  // Calculate start and end for page numbers
   let startPage = Math.max(0, currentPage - Math.floor(maxButtons / 2));
   let endPage = Math.min(totalPages - 1, startPage + maxButtons - 1);
 
@@ -85,7 +83,7 @@ export default function PublicTimelinePage() {
                 fontWeight: pageNumber === currentPage ? "bold" : "normal",
               }}
             >
-              {pageNumber + 1} {/* Add 1 to display correctly as 1, 2, 3, etc. */}
+              {pageNumber + 1} 
             </Link>
           );
         })}
