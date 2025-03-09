@@ -28,7 +28,7 @@ Then run the following line to add the migrations:
 dotnet ef database update --project ../minitwit.Infrastructure
 ```
 
-## Step 4: Add .env and appsettings.json files
+## Step 4a: Add .env and appsettings.json files
 Now we need to add a .env file with the following contents in the root of the minitwit.Web directory:
 
 ```sh
@@ -47,8 +47,14 @@ Next you need to add a connection string, JWT key, issuer and audience to the ap
     "Key": "",
     "Issuer": "",
     "Audience": ""
+  },
+  SimApiAccess: {
+    "Key": ""
   }
 ```
+
+## Step 4b: Adding docker secrets
+
 
 ## Step 5: Navigate to the web project
 Next, navigate to the minitwit.Web project:
