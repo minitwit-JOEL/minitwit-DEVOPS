@@ -4,14 +4,14 @@ on:
   workflow_dispatch:
   push:
     branches: [ main, actualYmlFiles ]
-    tags: ['v.*.*.*', 'V.*.*.*' ]
+    tags: ['v.*.*.*', 'V.*.*.*']
 
 jobs:
   tests:
     uses: ./.github/workflows/build_and_test.yaml
 
   release:
-    needs: [tests]
+    needs: ["tests"]
     runs-on: ubuntu-latest
     env:
       DOTNET_ROOT: /home/runner/.dotnet
@@ -27,16 +27,16 @@ jobs:
           dotnet-version: 8.0.*
 
       - name: Build and package .NET API
+        shell: bash
         run: |
           tag=$(git describe --tags --abbrev=0 || echo "v0.0.0")
           cd "src/minitwit.Api"
-
-          for release in linux-x64 osx-x64 win-x64
+          for runtime in linux-x64 osx-x64 win-x64
           do
-            release_os="minitwit-${tag}-${release}"
+            release_os="minitwit-${tag}-${runtime}"
             dotnet publish minitwit.Api.csproj \
               --framework net8.0 \
-              --runtime "$release" \
+              --runtime "$runtime" \
               -c Release \
               -o "$release_os" \
               /p:PublishTrimmed=true \
@@ -45,7 +45,6 @@ jobs:
             7z a -tzip "${{ github.workspace }}/minitwit.Api/${release_os}.zip" "./${release_os}/*"
             rm -r "${release_os}"
           done
-        shell: bash
 
       - name: Use Node.js
         uses: actions/setup-node@v4
@@ -58,18 +57,20 @@ jobs:
           npm ci
           npm run build --if-present
 
-      - name: Debug Web Build
+      - name: Debug Web Build Output
         working-directory: src/minitwit.Web
         run: |
-          echo "Checking contents of the web build directory..."
+          echo "Listing current directory contents:"
           ls -al
+          echo "Listing build output folder (if exists):"
+          ls -al build || echo "Folder 'build' not found."
 
       - name: Package web build
         working-directory: src/minitwit.Web
+        shell: bash
         run: |
           tag=$(git describe --tags --abbrev=0 || echo "v0.0.0")
-          7z a -tzip "${{ github.workspace }}/minitwit.Web/minitwit-web-${tag}.zip" "dist/*"
-        shell: bash
+          7z a -tzip "${{ github.workspace }}/minitwit.Web/minitwit-web-${tag}.zip" "build/*"
 
       - name: Set Tag
         run: echo "TAG=$(git describe --tags --abbrev=0 || echo 'v0.0.0')" >> $GITHUB_ENV
