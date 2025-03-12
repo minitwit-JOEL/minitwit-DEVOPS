@@ -23,8 +23,12 @@ interface messageReponse {
 export const loader: LoaderFunction = async ({ request }) => {
   const session = await getUserSession(request);
   const token = session.get("token");
-
-  const messagesResponse = await fetch(`${process.env.API_BASE_URL}api/twit/feed`, {
+  
+  if (!token) {
+    return redirect("/login");
+  }
+  
+  const messagesResponse = await fetch(`${process.env.API_BASE_URL}api/twit/feed?page=1`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${token}`,
