@@ -55,11 +55,16 @@ public class FollowService : IFollowService
         {
             throw new InvalidOperationException();
         }
-        
-        var follow = new Follow { WhoId = user.Id, WhomId = followUser.Id };
 
-        _dbContext.Followers.Add(follow);
-        await _dbContext.SaveChangesAsync();
+        var existingEntity = await _dbContext.Followers
+            .Where(f => f.WhoId == user.Id && f.WhomId == followUser.Id)
+            .FirstOrDefaultAsync();
+
+        if (existingEntity == null) {
+            var follow = new Follow { WhoId = user.Id, WhomId = followUser.Id };
+            await _dbContext.AddAsync(follow);
+            await _dbContext.SaveChangesAsync();
+        }
     }
 
     public async Task Unfollow(int latest, string username, string followerName)
