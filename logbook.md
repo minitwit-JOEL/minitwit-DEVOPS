@@ -89,3 +89,44 @@ We were unable to track any erros in our logs.
 We have a hypothesis that the errors are coursed by the followcontroller, and that the
 tweets errors are caues by missing or wrong tweets on the private timeline,
 relatead to unsuccesfull posts to the follow or unfollow endpoints.
+
+### Implementing build_and_test and release workflows
+
+#### build_and_test.yaml
+
+To implement the build_and_test workflow we took heavy inspiration from the one we made in the BDSA course. 
+This workflow builds the API and runs tests for it, the tests have not been made yet so they are commented out. 
+
+#### release.yaml
+
+Again to implement this workflow we took heavy inspiration from the similar one we made in the BDSA course, although this was quite tricky to get working.
+
+The initial problem we had was the not seeing the workflow run on github actions.
+A TA helped us with this saying that we had to publish the workflow to the main branch and we could then modify it from other branches and it would still run. 
+
+The next problem was some outdated dependencies, this includes: 
+- dotnet-version  7 --> 8
+- actions/checkout@  v1 --> v4
+- actions/setup-dotnet@  v1 --> v4
+- softprops/actions-gh-release@  v1 --> v2
+
+Afterwards we wanted the workflow to run on tag pushes, but the tags were not being fetched correctly. 
+To fix this we added checkout, with fetch-depth: 0, which seemed to resolve the issue.
+
+After that we ran into the problem that we attempted to zip the web build to a non existant destination so we added a debug step to print all the exisisting folders. 
+      - name: Debug Web Build
+         working-directory: src/minitwit.Web
+         run: |
+           echo "Checking contents of the web build directory..."
+           ls -al
+This issue was solved with some help from chatGPT. 
+Doing this we found that the folder we needed to zip to was a "build" folder, not a "dist" folder and we zipped correctly now. '
+
+The last issue we ran into was that the our workflow did not have permission to write to the repo. 
+To give it permissions we added a PAT to the repo, which we made the workflow use.  
+  with:
+           token: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
+           files: |
+             ${{ github.workspace }}/minitwit.Api/minitwit-*.zip
+             ${{ github.workspace }}/minitwit.Web/minitwit-web-*.zip
+With these fixes the workflow now makes working releases. 
