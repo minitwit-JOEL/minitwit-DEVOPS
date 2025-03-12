@@ -84,9 +84,15 @@ public class FollowService : IFollowService
         }
 
         var follower = await _dbContext.Followers
-            .SingleOrDefaultAsync(f => f.WhoId == user.Id && f.WhomId == unfollowUser.Id);
+            .Where(f => f.WhoId == user.Id && f.WhomId == unfollowUser.Id)
+            .Select(f => new Follow {
+                Id = f.Id,
+                WhoId = f.WhoId,
+                WhomId = f.WhomId
+            })
+            .ToListAsync();
         
-        _dbContext.Followers.Remove(follower);
-        await _dbContext.SaveChangesAsync();
+        _dbContext.Followers.RemoveRange(follower);
+        await _dbContext.SaveChangesAsync();            
     }
 }
