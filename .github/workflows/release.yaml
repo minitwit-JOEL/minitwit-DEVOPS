@@ -3,7 +3,7 @@ name: Release
 on:
   workflow_dispatch:
   push:
-    branches: [ main, actualYmlFiles ]
+    branches: [ main ]
     tags: ['v.*.*.*', 'V.*.*.*']
 
 jobs:
