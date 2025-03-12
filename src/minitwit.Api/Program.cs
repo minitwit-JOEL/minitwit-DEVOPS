@@ -17,12 +17,25 @@ using ITwitsService = minitwit.Application.Interfaces.ITwitsService;
 using TwitsService = minitwit.Application.Services.TwitsService;
 using minitwit.Infrastructure.Dtos.Sim;
 
+Console.WriteLine("So far so good - 0");
+
 var builder = WebApplication.CreateBuilder(args);
+
+Console.WriteLine("So far so good - 1");
+
 
 builder.Services.AddDistributedMemoryCache();
 
+Console.WriteLine("So far so good - 2");
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+var configuration = builder.Configuration;
+Console.WriteLine("So far so good - 3");
+Console.WriteLine("________________________________________________________\n\n\n");
+Console.WriteLine($"Connection String: {configuration["ConnectionStrings:DefaultConnection"]}");
+Console.WriteLine("________________________________________________________\n\n\n");
 
 builder.Services.AddSession(options => {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
