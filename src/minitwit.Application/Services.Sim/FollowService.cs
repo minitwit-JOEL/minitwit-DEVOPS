@@ -53,7 +53,7 @@ public class FollowService : IFollowService
         var followUser = await _dbContext.Users.SingleOrDefaultAsync(u => u.Username == followerName);
         if (followUser == null)
         {
-            throw new InvalidOperationException();
+            throw new ArgumentException("Follows user not found");
         }
 
         var existingEntity = await _dbContext.Followers
@@ -80,7 +80,7 @@ public class FollowService : IFollowService
         var unfollowUser = await _dbContext.Users.SingleOrDefaultAsync(u => u.Username == followerName);
         if (unfollowUser is null)
         {
-            throw new InvalidOperationException();
+            throw new ArgumentException("Unfollows user not found");
         }
 
         var follower = await _dbContext.Followers

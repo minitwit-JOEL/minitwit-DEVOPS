@@ -66,10 +66,6 @@ public class FollowControllerSim : ControllerBase
         {
             return NotFound();
         }
-        catch (InvalidOperationException)
-        {
-            return StatusCode(500);
-        }
     }
     
     public record FollowRequest(string? Follow, string? Unfollow);
