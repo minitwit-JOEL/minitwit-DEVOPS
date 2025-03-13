@@ -31,7 +31,6 @@ public class TwitsControllerSim : ControllerBase
         return Ok(messages);   
     }
 
-
     [HttpGet("msgs/{username}")]
     public async Task<IActionResult> GetMessagesForUser(string username, [FromQuery] int latest, [FromQuery] int no = 100)
     {
@@ -60,15 +59,8 @@ public class TwitsControllerSim : ControllerBase
             return StatusCode(StatusCodes.Status403Forbidden, new { status = 403, error_msg = "You are not authorized to use this resource!" });
         }
 
-        try
-        {
-            await _twitsService.PostMessagesForUser(latest, username, msgRequest.Content);
-            return NoContent();
-        }
-        catch (ArgumentException)
-        {
-            return NotFound(new { status = 404, error_msg = "User not found" });
-        }
+        await _twitsService.PostMessagesForUser(latest, username, msgRequest.Content);
+        return NoContent();
     }
     
     public record MessageRequest(string Content);

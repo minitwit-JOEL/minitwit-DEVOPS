@@ -69,20 +69,19 @@ public class TwitsService : ITwitsService
         await _simService.UpdateLatest(latest);
         
         var user = await _dbContext.Users.SingleOrDefaultAsync(u => u.Username == username);
-        if (user is null)
+        if (user is not null)
         {
-            throw new ArgumentException("User not found");
+
+            var newMessage = new Message
+            {
+                AuthorId = user.Id,
+                Text = content,
+                CreatedAt = DateTime.UtcNow,
+                Flagged = false
+            };
+
+            await _dbContext.Messages.AddAsync(newMessage);
+            await _dbContext.SaveChangesAsync();
         }
-
-        var newMessage = new Message
-        {
-            AuthorId = user.Id,
-            Text = content,
-            CreatedAt = DateTime.UtcNow,
-            Flagged = false
-        };
-
-        await _dbContext.Messages.AddAsync(newMessage);
-        await _dbContext.SaveChangesAsync();
     }
 }
