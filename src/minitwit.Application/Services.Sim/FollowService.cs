@@ -53,13 +53,18 @@ public class FollowService : IFollowService
         var followUser = await _dbContext.Users.SingleOrDefaultAsync(u => u.Username == followerName);
         if (followUser == null)
         {
-            throw new ArgumentException("User not found");
+            throw new ArgumentException("Follows user not found");
         }
-        
-        var follow = new Follow { WhoId = user.Id, WhomId = followUser.Id };
 
-        _dbContext.Followers.Add(follow);
-        await _dbContext.SaveChangesAsync();
+        var existingEntity = await _dbContext.Followers
+            .Where(f => f.WhoId == user.Id && f.WhomId == followUser.Id)
+            .FirstOrDefaultAsync();
+
+        if (existingEntity == null) {
+            var follow = new Follow { WhoId = user.Id, WhomId = followUser.Id };
+            await _dbContext.AddAsync(follow);
+            await _dbContext.SaveChangesAsync();
+        }
     }
 
     public async Task Unfollow(int latest, string username, string followerName)
@@ -75,17 +80,19 @@ public class FollowService : IFollowService
         var unfollowUser = await _dbContext.Users.SingleOrDefaultAsync(u => u.Username == followerName);
         if (unfollowUser is null)
         {
-            throw new ArgumentException("User not found");
+            throw new ArgumentException("Unfollows user not found");
         }
 
         var follower = await _dbContext.Followers
-            .SingleOrDefaultAsync(f => f.WhoId == user.Id && f.WhomId == unfollowUser.Id);
-        if (follower is null)
-        {
-            throw new InvalidOperationException();
-        }
+            .Where(f => f.WhoId == user.Id && f.WhomId == unfollowUser.Id)
+            .Select(f => new Follow {
+                Id = f.Id,
+                WhoId = f.WhoId,
+                WhomId = f.WhomId
+            })
+            .ToListAsync();
         
-        _dbContext.Followers.Remove(follower);
-        await _dbContext.SaveChangesAsync();
+        _dbContext.Followers.RemoveRange(follower);
+        await _dbContext.SaveChangesAsync();            
     }
 }
