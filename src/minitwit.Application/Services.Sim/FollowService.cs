@@ -62,7 +62,7 @@ public class FollowService : IFollowService
 
         if (existingEntity == null) {
             var follow = new Follow { WhoId = user.Id, WhomId = followUser.Id };
-            await _dbContext.AddAsync(follow);
+            await _dbContext.Followers.AddAsync(follow);
             await _dbContext.SaveChangesAsync();
         }
     }
