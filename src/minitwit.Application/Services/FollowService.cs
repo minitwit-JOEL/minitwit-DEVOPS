@@ -32,7 +32,7 @@ public class FollowService : IFollowService
         }
 
         var follow = new Follow { WhoId = whoId, WhomId = toFollowUser.Id };
-        
+
         await _dbContext.AddAsync(follow);
         await _dbContext.SaveChangesAsync();
         

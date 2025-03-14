@@ -12,7 +12,7 @@ namespace minitwit.Application.Services;
 public class TwitsService : ITwitsService
 {
     private readonly ApplicationDbContext _dbContext;
-    private const int PageSize = 30;
+    private const int PageSize = 50;
 
 
     public TwitsService(ApplicationDbContext dbContext)
@@ -26,6 +26,8 @@ public class TwitsService : ITwitsService
             .Include(m => m.Author)
             .Where(m => !m.Flagged)
             .OrderByDescending(m => m.CreatedAt)
+            .Skip(PageSize * page)
+            .Take(PageSize)
             .ToListAsync();
     }
 
@@ -40,8 +42,8 @@ public class TwitsService : ITwitsService
             .Include(m => m.Author)
             .Where(m => !m.Flagged && (m.AuthorId == userId || followers.Contains(m.AuthorId)))
             .OrderByDescending(m => m.CreatedAt)
-            //.Skip(PageSize * page)
-            //.Take(PageSize)
+            .Skip(PageSize * page)
+            .Take(PageSize)
             .ToListAsync();
     }
 
@@ -77,8 +79,8 @@ public class TwitsService : ITwitsService
             .Include(m => m.Author)
             .Where(m => m.Author.Username == user.Username && !m.Flagged)
             .OrderByDescending(m => m.CreatedAt)
-            //.Skip(PageSize * page)
-            //.Take(page)
+            .Skip(PageSize * page)
+            .Take(page)
             .ToListAsync();
 
         return twits;
@@ -102,5 +104,18 @@ public class TwitsService : ITwitsService
         await _dbContext.Messages.AddAsync(newMessage);
         await _dbContext.SaveChangesAsync();
         return newMessage;
+    }
+
+    public async Task<PaginationData> GetPaginationResponse(int page)
+    {
+        var total = await _dbContext.Messages.CountAsync();
+
+        return new PaginationData
+        {
+            PageSize = PageSize,
+            Total = total,
+            TotalPages = (int)Math.Ceiling(total / (double)PageSize),
+            CurrentPage = page
+        };
     }
 }

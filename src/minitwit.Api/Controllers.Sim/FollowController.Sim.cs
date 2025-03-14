@@ -33,7 +33,7 @@ public class FollowControllerSim : ControllerBase
             return Ok(new { follows = followerNames });
         } catch (ArgumentException)
         {
-            return NotFound(new { status = 404, error_msg = "User not found" });
+            return NotFound();
         }
     }
 
@@ -64,11 +64,7 @@ public class FollowControllerSim : ControllerBase
         }
         catch (ArgumentException)
         {
-            return NotFound(new { status = 404, error_msg = "User not found" });
-        }
-        catch (InvalidOperationException)
-        {
-            return StatusCode(500);
+            return NotFound();
         }
     }
     
