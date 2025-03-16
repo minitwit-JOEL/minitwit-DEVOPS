@@ -24,7 +24,7 @@ jobs:
             - name: Login to docker hub
               uses: docker/login-action@v3
               with:
-                username: ${{ secrets.DOCKER_USERNAME }}
+                username: ${{ secrets.DOCKER_HUB_USERNAME }}
                 password: ${{ secrets.DOCKER_PASSWORD }}
 
             - name: Setup Docker Buildx
@@ -36,9 +36,9 @@ jobs:
                 context: .
                 file: ./docker-compose.yaml
                 push: true
-                tags: ${{ secrets.DOCKER_USERNAME }}/minitwit-joel-db:latest
-                cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwit-joel-db:dbbuildcache
-                cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwit-joel-db:dbbuildcache,mode=max
+                tags: ${{ secrets.DOCKER_HUB_USERNAME }}/minitwit-joel-db:latest
+                cache-from: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/minitwit-joel-db:dbbuildcache
+                cache-to: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/minitwit-joel-db:dbbuildcache,mode=max
 
             - name: Build and push minitwit-joel-api image
               uses: docker/build-push-action@v2
@@ -46,9 +46,9 @@ jobs:
                 context: .
                 file: ./docker-compose.yaml
                 push: true
-                tags: ${{ secrets.DOCKER_USERNAME }}/minitwit-joel-api:latest
-                cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwit-joel-api:apibuildcache
-                cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwit-joel-api:apibuildcache,mode=max
+                tags: ${{ secrets.DOCKER_HUB_USERNAME }}/minitwit-joel-api:latest
+                cache-from: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/minitwit-joel-api:apibuildcache
+                cache-to: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/minitwit-joel-api:apibuildcache,mode=max
 
             - name: Build and push minitwit-joel-web image
               uses: docker/build-push-action@v2
@@ -56,17 +56,17 @@ jobs:
                 context: .
                 file: ./docker-compose.yaml
                 push: true
-                tags: ${{ secrets.DOCKER_USERNAME }}/minitwit-joel-web:latest
-                cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwit-joel-web:webbuildcache
-                cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwit-joel-web:webbuildcache,mode=max
+                tags: ${{ secrets.DOCKER_HUB_USERNAME }}/minitwit-joel-web:latest
+                cache-from: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/minitwit-joel-web:webbuildcache
+                cache-to: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/minitwit-joel-web:webbuildcache,mode=max
 
             - name: Test minitwit
               run: |
-                docker build -t $DOCKER_USERNAME/minitwittestimage -f Dockerfile-minitwit-tests .
+                docker build -t $DOCKER_HUB_USERNAME/minitwittestimage -f Dockerfile-minitwit-tests .
                 yes 2>/dev/null | docker-compose up -d
-                docker run --rm --network=itu-minitwit-network $DOCKER_USERNAME/minitwittestimage
+                docker run --rm --network=itu-minitwit-network $DOCKER_HUB_USERNAME/minitwittestimage
               env:
-                DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+                DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
         
             # - name: Configure SSH
             #   run: |
