@@ -19,7 +19,7 @@ docker run -d --mount source=minitiwt-devops_db-data,target=/var/lib/postgresql/
 
 sleep 60
 
-docker run -d --network=minitwit-network -p 8080:8080 -p 8081:8081 --name=minitwit-api -e "ConnectionStrings__DefaultConnection=Host=minitwit-db;Port=5432;Database=minitwit;Username=postgres;Password=postgres" -e "SimApiAccess__Key=Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh" lukan707/minitwit-joel-api:latest
+docker run -d --network=minitwit-network --mount source=minitiwt-devops_db-data,target=/var/lib/postgresql/data -p 8080:8080 -p 8081:8081 --name=minitwit-api -e "ConnectionStrings__DefaultConnection=Host=minitwit-db;Port=5432;Database=minitwit;Username=postgres;Password=postgres" -e "SimApiAccess__Key=Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh" lukan707/minitwit-joel-api:latest
 docker run -d --network=minitwit-network -p 3000:3000 --name=minitwit-web -e "API_BASE_URL=http://minitwit-api:8080/" -e "NODE_TLS_REJECT_UNAUTHORIZED=0" lukan707/minitwit-joel-web:latest 
 
 docker image prune -f
