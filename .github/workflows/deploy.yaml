@@ -3,7 +3,6 @@ name: Deploy
 on:
   workflow_dispatch:
   push:
-    branches: [ feature/#52-create-a-deploy-workflow ]
     tags: ['v.*.*.*', 'V.*.*.*']
 
 jobs:
