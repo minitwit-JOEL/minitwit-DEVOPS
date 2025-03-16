@@ -40,6 +40,9 @@ jobs:
                 cache-from: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/minitwit-joel-api:apibuildcache
                 cache-to: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/minitwit-joel-api:apibuildcache,mode=max
 
+            - name: Debug build context
+              run: ls -R
+
             - name: Build and push minitwit-joel-web image
               uses: docker/build-push-action@v2
               with:
