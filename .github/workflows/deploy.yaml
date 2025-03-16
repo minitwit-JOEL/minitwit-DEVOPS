@@ -46,7 +46,7 @@ jobs:
             - name: Build and push minitwit-joel-web image
               uses: docker/build-push-action@v2
               with:
-                context: ./src/minitiwt.Web
+                context: ./src/minitwit.Web
                 file: ./src/minitwit.Web/Dockerfile
                 push: true
                 tags: ${{ secrets.DOCKER_HUB_USERNAME }}/minitwit-joel-web:latest
