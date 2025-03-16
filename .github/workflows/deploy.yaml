@@ -33,7 +33,7 @@ jobs:
             - name: Build and push minitwit-joel-api image
               uses: docker/build-push-action@v2
               with:
-                context: ./src/minitwit.Api/
+                context: .
                 file: ./src/minitwit.Api/Dockerfile
                 push: true
                 tags: ${{ secrets.DOCKER_HUB_USERNAME }}/minitwit-joel-api:latest
