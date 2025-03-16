@@ -53,8 +53,7 @@ jobs:
             - name: Test minitwit
               run: |
                 docker compose up --build
-              env:
-                DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+              
         
             # - name: Configure SSH
             #   run: |
