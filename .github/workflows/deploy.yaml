@@ -52,9 +52,10 @@ jobs:
 
             - name: Test minitwit
               run: |
-                docker compose up --build
-              
-        
+                docker run -d --rm --network=minitwit-network -p 5432:5432 --name=minitwit-db -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=minitwit lukan707/minitwit-joel-db:latest
+                docker run -d --rm --network=minitwit-network -p 8080:8080 -p 8081:8081 --name=minitwit-api -e "ConnectionStrings__DefaultConnection=Host=minitwit-db;Port=5432;Database=minitwit;Username=postgres;Password=postgres" -e ${{ secrets.SIM_API_KEY }} lukan707/minitwit-joel-api:latest
+                docker run -d --rm --network=minitwit-network -p 3000:3000 --name=minitwit-web -e "API_BASE_URL=http://minitwit-api:8080/" -e "NODE_TLS_REJECT_UNAUTHORIZED=0" lukan707/minitwit-joel-web:latest 
+
             # - name: Configure SSH
             #   run: |
             #     mkdir -p ~/.ssh/
