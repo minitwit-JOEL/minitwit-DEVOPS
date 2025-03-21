@@ -1,0 +1,75 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v.*.*.*', 'V.*.*.*']
+
+jobs:
+    tests:
+        uses: ./.github/workflows/build_and_test.yaml
+        
+    deploy: 
+        needs: ["tests"]
+        runs-on: ubuntu-latest
+
+        
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+              with:
+                fetch-depth: 0
+            
+            - name: Login to docker hub
+              uses: docker/login-action@v3
+              with:
+                username: ${{ secrets.DOCKER_HUB_USERNAME }}
+                password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+
+            - name: Setup Docker Buildx
+              uses: docker/setup-buildx-action@v1
+
+            - name: Build and push minitwit-joel-api image
+              uses: docker/build-push-action@v2
+              with:
+                context: .
+                file: ./src/minitwit.Api/Dockerfile
+                push: true
+                tags: ${{ secrets.DOCKER_HUB_USERNAME }}/minitwit-joel-api:latest
+                cache-from: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/minitwit-joel-api:apibuildcache
+                cache-to: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/minitwit-joel-api:apibuildcache,mode=max
+
+            - name: Build and push minitwit-joel-web image
+              uses: docker/build-push-action@v2
+              with:
+                context: ./src/minitwit.Web
+                file: ./src/minitwit.Web/Dockerfile
+                push: true
+                tags: ${{ secrets.DOCKER_HUB_USERNAME }}/minitwit-joel-web:latest
+                cache-from: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/minitwit-joel-web:webbuildcache
+                cache-to: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/minitwit-joel-web:webbuildcache,mode=max
+
+            - name: Test minitwit
+              run: |
+                docker network create minitwit-network
+                docker run -d --rm --network=minitwit-network -p 5432:5432 --name=minitwit-db -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=minitwit lukan707/minitwit-joel-db:latest
+                docker run -d --rm --network=minitwit-network -p 8080:8080 -p 8081:8081 --name=minitwit-api -e "ConnectionStrings__DefaultConnection=Host=minitwit-db;Port=5432;Database=minitwit;Username=postgres;Password=postgres" -e ${{ secrets.SIM_API_KEY }} lukan707/minitwit-joel-api:latest
+                docker run -d --rm --network=minitwit-network -p 3000:3000 --name=minitwit-web -e "API_BASE_URL=http://minitwit-api:8080/" -e "NODE_TLS_REJECT_UNAUTHORIZED=0" lukan707/minitwit-joel-web:latest 
+
+            - name: Configure SSH
+              run: |
+                mkdir -p ~/.ssh/
+                echo "$SSH_KEY" > ~/.ssh/minitwit.key
+                chmod 600 ~/.ssh/minitwit.key
+              env:
+                SSH_KEY: ${{ secrets.SSH_KEY }}
+        
+            - name: Deploy to server
+                # Configure the ~./bash_profile and deploy.sh file on the Vagrantfile
+              run: >
+                ssh $SSH_USER@$SSH_HOST
+                -i ~/.ssh/minitwit.key -o StrictHostKeyChecking=no
+                './deploy.sh'
+              env:
+                SSH_USER: ${{ secrets.SSH_USER }}
+                SSH_HOST: ${{ secrets.SSH_HOST }}
