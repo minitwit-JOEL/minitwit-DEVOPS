@@ -130,3 +130,17 @@ To give it permissions we added a PAT to the repo, which we made the workflow us
              ${{ github.workspace }}/minitwit.Api/minitwit-*.zip
              ${{ github.workspace }}/minitwit.Web/minitwit-web-*.zip
 With these fixes the workflow now makes working releases. 
+
+## Week 7
+
+### The website responded with an application error when we used our CD pipeline
+
+We discovered that after our deploy workflow had finished the deployed web application responded with an application error.
+
+We found that when we manually build our contianers using the docker compose command, pushed the api image to the Github repository,
+and manually executed our deplouy script on the production server, the application worked without errors.
+
+By inspecting the logs we found that the error occured because the api contianer did not have the JWT-token, 
+that the web application authorizes itself to the api with.
+
+We fixed the bug by adding the JWT-token to the deploy script (and for local develop enviroment by adding it to the docker compose file).
