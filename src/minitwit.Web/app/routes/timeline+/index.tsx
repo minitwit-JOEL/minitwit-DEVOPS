@@ -28,7 +28,7 @@ export const loader: LoaderFunction = async ({ request }) => {
     return redirect("/login");
   }
   
-  const messagesResponse = await fetch(`${process.env.API_BASE_URL}api/twit/feed?page=1`, {
+  const messagesResponse = await fetch(`${process.env.API_BASE_URL}api/twit/feed?page=0`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${token}`,
