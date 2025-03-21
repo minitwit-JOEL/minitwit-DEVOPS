@@ -30,6 +30,7 @@ services:
     environment:
       - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=minitwit;Username=postgres;Password=postgres
       - SimApiAccess__Key=Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh
+      - Token__Key=jg4mywvyYnFJgJhLT+6AmMllIL4t/86qY75kt42HRmV4=;Issuer=minitwit-Api;Audience=minitwit-Web
     ports:
       - "8080:8080"
       - "8081:8081"
