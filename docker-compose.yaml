@@ -3,12 +3,8 @@ services:
   db:
     image: postgres:latest
     container_name: minitwit-db
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=minitwit
-
-      - PGUSER=postgres
+    env_file:
+      - .secrets
     healthcheck:
       #This command checks if the database is ready, right on the source db server
       test: [ "CMD-SHELL", "pg_isready" ]
@@ -27,9 +23,8 @@ services:
     container_name: minitwit-api
     depends_on:
       - db
-    environment:
-      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=minitwit;Username=postgres;Password=postgres
-      - SimApiAccess__Key=Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh
+    env_file:
+      - .secrets
     ports:
       - "8080:8080"
       - "8081:8081"
