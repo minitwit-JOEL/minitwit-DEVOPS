@@ -1,15 +1,13 @@
 global:
-  scrape_interval: 15s
-  evaluation_interval: 15s
-
-rule_files:
-  - prometheus.rules.yml
+  scrape_interval: 5s
 
 scrape_configs:
+  # Scrape Prometheus itself
   - job_name: 'prometheus'
     static_configs:
       - targets: ['prometheus:9090']
 
+  # Scrape your Minitwit application
   - job_name: 'minitwit-api'
     static_configs:
-      - targets: ['minitwit-api:8080']
+      - targets: ['']  # Adjust port if needed

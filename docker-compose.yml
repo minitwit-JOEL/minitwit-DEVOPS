@@ -4,6 +4,8 @@ services:
   db:
     image: postgres:latest
     container_name: minitwit-db
+    networks:
+      - monitoring
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
@@ -59,7 +61,7 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     networks:
       - monitoring
 
@@ -67,7 +69,7 @@ services:
     image: grafana/grafana:10.2.4
     container_name: grafana
     ports:
-      - "3050:3050"
+      - "3001:3000"
     networks:
       - monitoring
     volumes:
@@ -75,6 +77,8 @@ services:
 
 networks:
   monitoring:
+    external: false 
+    name: monitoring
     driver: bridge
 
 volumes:
