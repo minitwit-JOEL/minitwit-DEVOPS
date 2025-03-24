@@ -104,7 +104,7 @@ else
     app.UseCors("DevelopmentOrigins");
 }
 app.MapPrometheusScrapingEndpoint();
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();

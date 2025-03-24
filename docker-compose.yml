@@ -31,10 +31,9 @@ services:
       - monitoring
     depends_on:
       - db
-      - grafana
-      - prometheus
     environment:
       - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=minitwit;Username=postgres;Password=postgres
+      - Token__Key=jg4mywvyYnFJgJhLT+6AmMllIL4t/86qY75kt42HRmV4=;Issuer=minitwit-Api;Audience=minitwit-web
       - SimApiAccess__Key=Basic c2ltdWxhdG9yOnN1cGVyX3NhZmUh
     ports:
       - "8080:8080"
@@ -64,6 +63,8 @@ services:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     networks:
       - monitoring
+    depends_on:
+      - minitwit-api
 
   grafana:
     image: grafana/grafana:10.2.4
@@ -74,6 +75,8 @@ services:
       - monitoring
     volumes:
       - grafana-data:/var/lib/grafana
+    depends_on:
+      - minitwit-api
 
 networks:
   monitoring:
