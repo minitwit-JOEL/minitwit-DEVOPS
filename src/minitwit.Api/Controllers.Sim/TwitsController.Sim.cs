@@ -30,7 +30,7 @@ public class TwitsControllerSim : ControllerBase
         var messages = await _twitsService.GetMessages(latest, no);
         return Ok(messages);   
     }
-
+    
     [HttpGet("msgs/{username}")]
     public async Task<IActionResult> GetMessagesForUser(string username, [FromQuery] int latest, [FromQuery] int no = 100)
     {
@@ -42,6 +42,26 @@ public class TwitsControllerSim : ControllerBase
         try
         {
             var messages = await _twitsService.GetMessagesForUser(latest, username, no);
+
+            return Ok(messages);
+        }
+        catch (ArgumentException)
+        {
+            return NotFound();
+        }
+    }
+
+    [HttpGet("msgs/private/{username}")]
+    public async Task<IActionResult> GetPrivateTimeline(string username, [FromQuery] int latest, [FromQuery] int no = 100)
+    {
+        if (!_simService.CheckIfRequestFromSimulator(Request))
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new { status = 403, error_msg = "You are not authorized to use this resource!" });
+        }
+        
+        try
+        {
+            var messages = await _twitsService.GetPrivateTimeline(latest, username, no);
 
             return Ok(messages);
         }

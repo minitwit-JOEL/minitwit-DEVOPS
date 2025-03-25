@@ -61,7 +61,7 @@ public class TwitsService : ITwitsService
             .Where(m => m.AuthorId == user.Id && !m.Flagged)
             .OrderByDescending(m => m.CreatedAt)
             .Skip(PageSize * page)
-            .Take(page)
+            .Take(PageSize)
             .ToListAsync();
 
         return twits;
@@ -77,10 +77,10 @@ public class TwitsService : ITwitsService
 
         var twits = await _dbContext.Messages
             .Include(m => m.Author)
-            .Where(m => m.Author.Username == user.Username && !m.Flagged)
+            .Where(m => m.AuthorId == user.Id && !m.Flagged)
             .OrderByDescending(m => m.CreatedAt)
             .Skip(PageSize * page)
-            .Take(page)
+            .Take(PageSize)
             .ToListAsync();
 
         return twits;

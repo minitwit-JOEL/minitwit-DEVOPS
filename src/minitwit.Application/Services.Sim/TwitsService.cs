@@ -38,6 +38,33 @@ public class TwitsService : ITwitsService
         return messages;
     }
 
+    public async Task<IEnumerable<MessageDto>> GetPrivateTimeline(int latest, string username, int no)
+    {
+        await _simService.UpdateLatest(latest);
+        
+        var user = await _dbContext.Users.SingleOrDefaultAsync(u => u.Username == username);
+        if (user is null)
+        {
+            throw new ArgumentException("User not found");
+        }
+        
+        return await _dbContext.Messages
+            .Where(m => !m.Flagged &&
+                        (m.AuthorId == user.Id ||
+                         _dbContext.Followers.Any(f => f.WhoId == user.Id && f.WhomId == m.AuthorId)))
+            .OrderByDescending(m => m.CreatedAt)
+            .Skip(no * 50)
+            .Take(50)
+            .Include(m => m.Author)
+            .Select(m => new MessageDto
+            {
+                Content = m.Text,
+                PubDate = m.CreatedAt,
+                User = m.Author.Username
+            })
+            .ToListAsync();
+    }
+    
     public async Task<IEnumerable<MessageDto>> GetMessagesForUser(int latest, string username, int no)
     {
         await _simService.UpdateLatest(latest);

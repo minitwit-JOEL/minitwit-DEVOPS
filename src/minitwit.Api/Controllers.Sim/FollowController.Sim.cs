@@ -38,7 +38,7 @@ public class FollowControllerSim : ControllerBase
     }
 
     [HttpPost("fllws/{username}")]
-    public async Task<IActionResult> GetUsersTwitsPost(string username, [FromBody] FollowRequest request, [FromQuery] int latest, [FromQuery] int no = 100)
+    public async Task<IActionResult> FollowOrUnfollow(string username, [FromBody] FollowRequest request, [FromQuery] int latest, [FromQuery] int no = 100)
     {
         if (!_simService.CheckIfRequestFromSimulator(Request))
         {
