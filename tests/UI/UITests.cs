@@ -1,11 +1,11 @@
 using OpenQA.Selenium;
-using OpenQA.Selenium.Firefox;
+using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 using OpenQA.Selenium.Interactions;
 using Xunit;
 using Microsoft.EntityFrameworkCore;
 using minitwit.Infrastructure.Data;
-using minitwit.Domain.Entities;  // Ensure you import the correct namespace for your entities
+using minitwit.Domain.Entities;
 using System;
 using System.Linq;
 
@@ -27,11 +27,11 @@ namespace UI.Tests
 
         private IWebDriver InitializeDriver()
         {
-            var options = new FirefoxOptions();
+            var options = new ChromeOptions();
             // Uncomment the line below to run in headless mode
             // options.AddArgument("--headless");
 
-            return new FirefoxDriver(options);
+            return new ChromeDriver(options);
         }
 
         private void RegisterUserViaGui(IWebDriver driver, string[] data)
