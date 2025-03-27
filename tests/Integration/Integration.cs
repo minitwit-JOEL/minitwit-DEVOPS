@@ -10,14 +10,13 @@ namespace minitwit.Tests.Integration
     public class IntegrationTests
     {
         private readonly HttpClient _client;
-        private const string BaseUrl = "http://localhost:3100";
+        private const string BaseUrl = "http://localhost:5034";
 
         public IntegrationTests()
         {
             _client = new HttpClient();
         }
 
-        // Register a user
         private async Task RegisterUser(string username, string email, string password)
         {
             var registerRequest = new
@@ -29,7 +28,7 @@ namespace minitwit.Tests.Integration
             };
 
             var content = new StringContent(JsonConvert.SerializeObject(registerRequest), Encoding.UTF8, "application/json");
-            var response = await _client.PostAsync($"{BaseUrl}/register", content);
+            var response = await _client.PostAsync($"{BaseUrl}/api/auth/register", content);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -49,7 +48,7 @@ namespace minitwit.Tests.Integration
             };
 
             var content = new StringContent(JsonConvert.SerializeObject(loginRequest), Encoding.UTF8, "application/json");
-            var response = await _client.PostAsync($"{BaseUrl}/login", content);
+            var response = await _client.PostAsync($"{BaseUrl}/api/auth/login", content);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -65,16 +64,13 @@ namespace minitwit.Tests.Integration
         [Fact]
         public async Task Test_Register()
         {
-            await RegisterUser("ttttestuser", "testuser@example.com", "password123");
+            await RegisterUser("abc123", "abc123@example.com", "password123");
         }
 
         [Fact]
         public async Task Test_Login()
         {
-            // should perhaps be deleted if Test_Register is run first, but just in case
-            await RegisterUser("estuser", "testuser@example.com", "password123");
-
-            await LoginUser("estuser", "password123");
+            await LoginUser("abc123", "password123");
         }
     }
 }
