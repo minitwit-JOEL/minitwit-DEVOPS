@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using minitwit.Application.Interfaces;
 using minitwit.Application.Interfaces.Sim;
 using IFollowService = minitwit.Application.Interfaces.Sim.IFollowService;
 
