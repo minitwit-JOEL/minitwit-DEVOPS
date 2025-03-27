@@ -51,26 +51,6 @@ public class TwitsControllerSim : ControllerBase
         }
     }
 
-    [HttpGet("msgs/private/{username}")]
-    public async Task<IActionResult> GetPrivateTimeline(string username, [FromQuery] int latest, [FromQuery] int no = 100)
-    {
-        if (!_simService.CheckIfRequestFromSimulator(Request))
-        {
-            return StatusCode(StatusCodes.Status403Forbidden, new { status = 403, error_msg = "You are not authorized to use this resource!" });
-        }
-        
-        try
-        {
-            var messages = await _twitsService.GetPrivateTimeline(latest, username, no);
-
-            return Ok(messages);
-        }
-        catch (ArgumentException)
-        {
-            return NotFound();
-        }
-    }
-
     [HttpPost("msgs/{username}")]
     public async Task<IActionResult> PostMessageForUser(string username, [FromQuery] int latest, [FromBody] MessageRequest msgRequest)
     {
