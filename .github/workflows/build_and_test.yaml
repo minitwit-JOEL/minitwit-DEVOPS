@@ -70,9 +70,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - uses: stefanoeb/eslint-action@1.0.2
-      with:
-        files: src/minitwit.Web
     - name: Install dependencies for web
       working-directory: src/minitwit.Web
       run:
@@ -82,4 +79,4 @@ jobs:
       run:
         npm run build --if-present
     - name: Run ESLint
-      run: eslint . --ext .js,.jsx,.ts,.tsx
+      run: npx eslint . --ext .js,.jsx,.ts,.tsx
