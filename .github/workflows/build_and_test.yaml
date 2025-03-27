@@ -15,7 +15,24 @@ jobs:
     - name: ShellCheck
       uses: ludeeus/action-shellcheck@2.0.0
 
-  build:
+  Kicks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # Scan Iac with kics
+      - name: run kics Scan
+        uses: checkmarx/kics-github-action@v2.1.6
+        with:
+          path: 'docker-compose.yaml,src/minitwit.Api/Dockerfile,src/minitwit.Web/Dockerfile'
+          # The degree of severity can be sat by the following line
+          # fail_on: high,medium
+          output_path: kicksResults/
+      # Display the results in json format
+      - name: display kics results
+        run: |
+          cat kicksResults/results.json
+    
+  build_and_test:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
