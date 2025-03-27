@@ -16,7 +16,6 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3" />
     <ProjectReference Include="../../src/minitwit.Infrastructure/minitwit.Infrastructure.csproj" />
     <ProjectReference Include="../../src/minitwit.Domain/minitwit.Domain.csproj" />
-    <ProjectReference Include="../../src/minitwit.Web/minitwit.Web.csproj" />
   </ItemGroup>
 
   <ItemGroup>
