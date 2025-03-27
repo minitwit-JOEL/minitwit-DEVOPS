@@ -71,6 +71,8 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - uses: stefanoeb/eslint-action@1.0.2
+      with:
+        files: src/minitwit.Web
     - name: Install dependencies for web
       working-directory: src/minitwit.Web
       run:
