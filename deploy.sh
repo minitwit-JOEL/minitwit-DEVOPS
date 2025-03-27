@@ -4,7 +4,7 @@ docker image pull lukan707/minitwit-joel-db:latest
 docker image pull lukan707/minitwit-joel-api:latest
 docker image pull lukan707/minitwit-joel-web:latest
 
-docker stop $(docker ps -q)
+docker stop "$(docker ps -q)"
 
 docker network create minitwit-network
 
