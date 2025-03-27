@@ -65,7 +65,6 @@ public class AuthService : IAuthService
         var hashedPassword = BCrypt.Net.BCrypt.HashPassword(password + salt, 10);
 
         var user = new User { Username = username, Email = email, PasswordHash = hashedPassword, Salt = salt };
-        Console.WriteLine("Password: " + password + " - HashedPassword: " + hashedPassword);
         await _dbContext.Users.AddAsync(user);
         await _dbContext.SaveChangesAsync();
 
