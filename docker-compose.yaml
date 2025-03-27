@@ -1,6 +1,7 @@
 version: '3.9'
 services:
   db:
+    mem_limit: 128m
     image: postgres:latest
     container_name: minitwit-db
     env_file:
@@ -17,6 +18,7 @@ services:
       - db-data:/var/lib/postgresql/data
 
   minitwit-api:
+    mem_limit: 512m
     build:
       context: .
       dockerfile: ./src/minitwit.Api/Dockerfile
@@ -30,6 +32,7 @@ services:
       - "8081:8081"
 
   web:
+    mem_limit: 256m
     build:
       context: ./src/minitwit.Web
       dockerfile: Dockerfile
