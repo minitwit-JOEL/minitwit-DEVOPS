@@ -9,16 +9,17 @@ services:
     container_name: minitwit-db
     env_file:
       - .secrets
+    ports:
+      - "5432:5432"
     healthcheck:
       #This command checks if the database is ready, right on the source db server
       test: [ "CMD-SHELL", "pg_isready" ]
+      start_period: 10s
       interval: 5s
-      timeout: 5s
-      retries: 5
-    ports:
-      - "5432:5432"
+      timeout: 10s
+      retries: 25
     volumes:
-      - db-data:/var/lib/postgresql/data
+    - db-data:/var/lib/postgresql/data
 
   minitwit-api:
     deploy: 
@@ -36,6 +37,11 @@ services:
     ports:
       - "8080:8080"
       - "8081:8081"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/sim/latest"]
+      interval: 2s
+      timeout: 30s
+      retries: 20
 
   web:
     deploy: 
@@ -48,12 +54,16 @@ services:
     container_name: minitwit-web
     depends_on:
       - minitwit-api
-      
     environment:
       - API_BASE_URL=http://minitwit-api:8080/
       - NODE_TLS_REJECT_UNAUTHORIZED=0
     ports:
       - "3000:3000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 2s
+      timeout: 30s
+      retries: 20
 
 volumes:
   db-data:
