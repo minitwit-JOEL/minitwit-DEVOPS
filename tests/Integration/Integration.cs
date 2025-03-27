@@ -15,9 +15,7 @@ namespace minitwit.Tests.Integration
     public class IntegrationTests
     {
         private readonly HttpClient _client;
-        private const string BaseUrl = "http://127.0.0.1:5001";
-        private const string Username = "simulator";
-        private const string Password = "super_safe!";
+        private const string BaseUrl = "http://localhost:3100";
 
         public IntegrationTests()
         {
