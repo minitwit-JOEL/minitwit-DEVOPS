@@ -30,7 +30,7 @@ jobs:
           output_path: kicksResults/
       # Display the results in json format
       - name: display kics results
-        run: k
+        run:
           cat kicksResults/results.json
     
   build_and_test:
