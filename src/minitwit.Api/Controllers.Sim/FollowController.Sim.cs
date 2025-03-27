@@ -23,7 +23,7 @@ public class FollowControllerSim : ControllerBase
     {
         if (!_simService.CheckIfRequestFromSimulator(Request))
         {
-            return StatusCode(StatusCodes.Status403Forbidden, new { status = 403, error_msg = "You are not authorized to use this resource!" });
+            return StatusCode(StatusCodes.Status401Unauthorized, new { status = 401, error_msg = "You are not authorized to use this resource!" });
         }
 
         try
@@ -42,7 +42,7 @@ public class FollowControllerSim : ControllerBase
     {
         if (!_simService.CheckIfRequestFromSimulator(Request))
         {
-            return StatusCode(StatusCodes.Status403Forbidden, new { status = 403, error_msg = "You are not authorized to use this resource!" });
+            return StatusCode(StatusCodes.Status401Unauthorized, new { status = 401, error_msg = "You are not authorized to use this resource!" });
         }
 
         try
@@ -59,8 +59,8 @@ public class FollowControllerSim : ControllerBase
                 return NoContent();
             }
 
-            return BadRequest(new
-                { status = 400, error_msg = "Invalid request: Provide either 'follow' or 'unfollow'." });
+            return StatusCode(StatusCodes.Status500InternalServerError, new
+                { status = 500, error_msg = "Invalid request: Provide either 'follow' or 'unfollow'." });
         }
         catch (ArgumentException)
         {

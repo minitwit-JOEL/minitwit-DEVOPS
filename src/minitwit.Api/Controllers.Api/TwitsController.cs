@@ -33,7 +33,7 @@ public class TwitsController : ControllerBase
     public async Task<IActionResult> GetPrivateTwits([FromQuery] int page = default)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
+        
         if (string.IsNullOrEmpty(userId))
         {
             var publicTwits = await _twitsService.GetPublicTimeline(page);
