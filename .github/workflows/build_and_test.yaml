@@ -15,7 +15,7 @@ jobs:
     - name: ShellCheck
       uses: ludeeus/action-shellcheck@2.0.0
 
-  Kicks:
+  kicks:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -25,11 +25,11 @@ jobs:
         with:
           path: 'docker-compose.yaml,src/minitwit.Api/Dockerfile,src/minitwit.Web/Dockerfile'
           # The degree of severity can be sat by the following line
-          # fail_on: high,medium
+          fail_on: high,medium
           output_path: kicksResults/
       # Display the results in json format
       - name: display kics results
-        run: |
+        run: k
           cat kicksResults/results.json
     
   build_and_test:
