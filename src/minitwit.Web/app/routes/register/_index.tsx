@@ -55,7 +55,18 @@ export const action: ActionFunction = async ({ request }) => {
 
   if (!response.ok) {
     const responseData = await response.json();
-    throw new Error(responseData.detail);
+    if (responseData?.error_msg === "The username is already taken") {
+      return json({
+        message: "Username is already taken. Please choose another one.",
+        username: username,
+        email: email,
+      });
+    }
+
+    console.error("Registration failed:", responseData);
+    return json({
+      message: `Registration failed: ${responseData?.message || 'Unknown error'}`,
+    });
   }
 
 
