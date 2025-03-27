@@ -25,7 +25,7 @@ public class TwitsControllerSim : ControllerBase
     {
         if (!_simService.CheckIfRequestFromSimulator(Request))
         {
-            return StatusCode(StatusCodes.Status403Forbidden, new { status = 403, error_msg = "You are not authorized to use this resource!" });
+            return StatusCode(StatusCodes.Status401Unauthorized, new { status = 401, error_msg = "You are not authorized to use this resource!" });
         }
         var messages = await _twitsService.GetMessages(latest, no);
         return Ok(messages);   
@@ -36,7 +36,7 @@ public class TwitsControllerSim : ControllerBase
     {
         if (!_simService.CheckIfRequestFromSimulator(Request))
         {
-            return StatusCode(StatusCodes.Status403Forbidden, new { status = 403, error_msg = "You are not authorized to use this resource!" });
+            return StatusCode(StatusCodes.Status401Unauthorized, new { status = 401, error_msg = "You are not authorized to use this resource!" });
         }
         
         try
@@ -56,7 +56,7 @@ public class TwitsControllerSim : ControllerBase
     {
         if (!_simService.CheckIfRequestFromSimulator(Request))
         {
-            return StatusCode(StatusCodes.Status403Forbidden, new { status = 403, error_msg = "You are not authorized to use this resource!" });
+            return StatusCode(StatusCodes.Status401Unauthorized, new { status = 401, error_msg = "You are not authorized to use this resource!" });
         }
 
         await _twitsService.PostMessagesForUser(latest, username, msgRequest.Content);
