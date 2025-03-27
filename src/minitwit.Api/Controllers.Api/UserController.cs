@@ -21,6 +21,7 @@ public class UserController : ControllerBase
     public async Task<ActionResult> GetUser()
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
         if (string.IsNullOrEmpty(userId))
         {
             return Unauthorized("No user found");

@@ -58,8 +58,8 @@ public class FollowControllerSim : ControllerBase
                 return NoContent();
             }
 
-            return StatusCode(StatusCodes.Status500InternalServerError, new
-                { status = 500, error_msg = "Invalid request: Provide either 'follow' or 'unfollow'." });
+            return BadRequest(new
+                { status = 400, error_msg = "Invalid request: Provide either 'follow' or 'unfollow'." });
         }
         catch (ArgumentException)
         {
