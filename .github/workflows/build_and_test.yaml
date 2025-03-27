@@ -26,7 +26,7 @@ jobs:
           path: 'docker-compose.yaml,src/minitwit.Api/Dockerfile,src/minitwit.Web/Dockerfile'
           # The degree of severity can be sat by the following line
           fail_on: high,medium
-          exclude_queries: '693, 400, 200'
+          exclude_queries: '693, 400, 250'
           output_path: kicksResults/
       # Display the results in json format
       - name: display kics results
