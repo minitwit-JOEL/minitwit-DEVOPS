@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Base URL and common headers
-if [ $1 == "--production" ]; then
+if [ "$1" == "--production" ]; then
   BASE_URL="http://67.207.72.167:8080/api/sim"
 else 
   BASE_URL="http://localhost:8080/api/sim"

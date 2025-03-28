@@ -50,10 +50,14 @@ jobs:
         with:
           node-version: '20.x'
 
-      - name: Install dependencies and build web
+      - name: Install dependencies for web
         working-directory: src/minitwit.Web
-        run: |
+        run:
           npm ci
+          
+      - name: Build web
+        working-directory: src/minitwit.Web
+        run:
           npm run build --if-present
 
       - name: Debug Web Build Output

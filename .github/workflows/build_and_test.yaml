@@ -8,17 +8,89 @@ on:
     branches: [ main, develop ]
 
 jobs:
-  build:
+  shellcheck:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
+    - name: ShellCheck
+      uses: ludeeus/action-shellcheck@2.0.0
+
+  kicks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # Scan Iac with kics
+      - name: run kics Scan
+        uses: checkmarx/kics-github-action@v2.1.6
+        with:
+          path: 'docker-compose.yaml,src/minitwit.Api/Dockerfile,src/minitwit.Web/Dockerfile'
+          # The degree of severity can be sat by the following line
+          fail_on: high,medium
+          exclude_queries: '693, 400, 250'
+          output_path: kicksResults/
+          output_formats: json
+      # Display the results in json format
+      - name: display kics results
+        run:
+          cat kicksResults/results.json || echo "No results found"
+    
+  #analyze_dotnet:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Setup .NET
+  #       uses: actions/setup-dotnet@v3
+  #       with:
+  #         dotnet-version: '8.0.*'
+  #     - name: Restore dependencies for .NET
+  #       run: dotnet restore src/minitwit.Api
+  #     - name: Run static analysis on C#
+  #       run: dotnet build src/minitwit.Api --no-restore /p:RunAnalyzers=true /warnaserror
+
+  build_and_test_NET:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 8.0.*
-    - name: Restore dependencies
+    - name: Restore dependencies .NET
       run: dotnet restore src/minitwit.Api
-    - name: Build
+    - name: Build .NET
       run: dotnet build src/minitwit.Api --no-restore
-   # - name: Test
+   # - name: Test .NET
    #   run: dotnet test tests/minitwit.tests --no-build --verbosity normal
+
+  build_and_test_web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+      - name: Install dependencies for web
+        working-directory: src/minitwit.Web
+        run: npm i
+      - name: Build web
+        working-directory: src/minitwit.Web
+        run: npm run build --if-present
+
+  build_and_analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+      - name: Install dependencies for web
+        working-directory: src/minitwit.Web
+        run: npm i
+      - name: Build web
+        working-directory: src/minitwit.Web
+        run: npm run build --if-present
+      - name: Run ESLint
+        working-directory: src/minitwit.Web
+        run: npm run lint
