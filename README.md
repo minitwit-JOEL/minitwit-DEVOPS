@@ -1,50 +1,23 @@
 # Application Setup Guide
 
-To start the application, first **setup Docker** and **add the migrations**:
+The application can be stared by running docker compose or by using the deploy.sh script.
+Either way, the application is dependent on certain enviroment variables, which are described in the section below.
 
-## Step 1: Install Docker
+# Dependencies
 
-First, install Docker. To create and start the Docker container, navigate to the solution directory and run:
+Both docker compose and deploy.sh are dependen on a file called .secrets located in the root directory:
 
-```sh
-docker compose up -d
-```
-or 
-```sh
-docker compose up --build
-```
+```/.secrets```
 
-## Step 2: Add migrations
-The migrations should add themselves but if they do not, please follow below:
-After this, we need to add the tables in the database. First, navigate to the Api directory:
-
-```sh
-cd src/minitwi.Api
-```
-
-Then run the following line to add the migrations:
-
-```sh
-dotnet ef database update --project ../minitwit.Infrastructure
-```
-
-## Step 4a: Add .env and appsettings.json files
-Now we need to add a .env file with the following contents in the root of the minitwit.Web directory:
-
-```sh
-NODE_TLS_REJECT_UNAUTHORIZED=0
-API_BASE_URL=https://localhost:8081/
-PORT=3100
-```
-
-Next you need to add a connection string, JWT key, issuer and audience to the appsettings.json 
+A file called appsettings.json can also be sat, if one wants to run the dotnet application without continarization.
+It should have the following structure, and reside in the parth src/minitwit.Api/apisettings.json:
 
 ```sh
 "ConnectionStrings": {
     "DefaultConnection": ""
   },
   "Token": {
-    "Key": "",
+    "Key": "",J
     "Issuer": "",
     "Audience": ""
   },
@@ -52,46 +25,98 @@ Next you need to add a connection string, JWT key, issuer and audience to the ap
     "Key": ""
   }
 ```
-
-## Step 4b: Adding docker secrets
-
-
-## Step 5: Navigate to the web project
-Next, navigate to the minitwit.Web project:
+A file called .env can also be sat, if one wants to run the node.js application without continarization.
+It should have the following content, and reside in the parth src/minitwit.Web/.env:
 
 ```sh
-cd ../minitwi.Web
+NODE_TLS_REJECT_UNAUTHORIZED=0
+API_BASE_URL=https://localhost:8081/
+PORT=3100
 ```
 
-Then install the necessary dependencies by running:
+# Docker compose
+
+When it is ensured that the secrets file is in place, 
+the containers can be brought up by running the following command in the root directory of the project:
+
+**NOTICE:** this command builds the images from scratch. If the image in the corresponding Dockerfile 
+or in the docker-compose.yaml file haven't been changed, it is not necesarry to build, which can take a while.
 
 ```sh
-npm install
+docker compose up -build
 ```
 
-## Step 6: Start the project
-You are now ready to start the project. In one terminal, start the Web project by running:
+If no building is required:
 
 ```sh
-npm run dev
+docker compose up
 ```
 
-And in another terminal, run the backend from the API project by running:
+It can also be runned in detached mode:
 
 ```sh
-dotnet watch -lp https
+docker compose up -d
 ```
 
-Or simply use the build version that docker spins up
+The containers can be brought down again by the command:
 
-## Test simulators with bash script
+```sh
+docker compose down
+```
 
-The bash script can be used to both test the simulator in development (localhost) and in production.
+# Deploy.sh script
 
-To test development, when standing in the root folder:
+When it is ensured that the secrets file is in place, 
+the containers can be brought up by running the following command in the root directory of the project:
 
-`./tests/test_sim_api.sh`
+```sh
+/.deploy.sh
+```
 
-To test production, when standing in the root folder:
+# Viewing the web application
 
-`./tests/test_sim_api.sh --production`
+## Localhost
+
+The webapplication on the local enviroment can be found at <http://localhost:300>
+
+## Production
+
+The webapplication on the production enviroment can be found at <http://67.207.72.167:3000>
+
+# Manually testing the simulator endpoints with a bash script
+
+## Testing the simualtor on localhost
+
+To test the simualtor endpoints, when standing in the root folder:
+
+```sh
+tests/./test_sim_api.sh 
+```
+
+## Testing the simualtor on production
+
+To test the simualtor endpoints, when standing in the root folder:
+
+```sh
+tests/./test_sim_api.sh --production
+```
+
+# Viewing metrics
+
+## Viewing metrics on localhost
+
+The monitoring dashboard can be found at <http://localhost:9090>
+
+## Viewing metrics on production
+
+The monitoring dashboard can be found at
+
+# Manually triggering the deploy.sh script
+
+Fist ssh into the VM on which you wish to manually trigger the deploy.sh script.
+
+Then execute the following command:
+
+```sh
+/home/github/./deploy.sh
+```
