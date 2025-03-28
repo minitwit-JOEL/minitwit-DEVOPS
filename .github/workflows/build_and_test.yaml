@@ -75,10 +75,11 @@ jobs:
     - name: Install dependencies for web
       working-directory: src/minitwit.Web
       run:
-        npm ci src/minitwit.Web
+        npm ci
     - name: Build web
       working-directory: src/minitwit.Web
       run:
         npm run build --if-present
     - name: Run ESLint
-      run: npx eslint src/minitwit.Web --ext .ts,.tsx
+      working-directory: src/minitwit.Web
+      run: npx eslint --ext .ts,.tsx
