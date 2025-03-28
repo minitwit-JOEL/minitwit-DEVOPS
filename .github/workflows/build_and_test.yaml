@@ -73,7 +73,7 @@ jobs:
     - name: Install dependencies for web
       working-directory: src/minitwit.Web
       run:
-        npm ci
+        npm ci src/minitwit.Web
     - name: Build web
       working-directory: src/minitwit.Web
       run:
