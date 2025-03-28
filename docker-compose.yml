@@ -52,7 +52,7 @@ services:
       - API_BASE_URL=http://minitwit-api:8080/
       - NODE_TLS_REJECT_UNAUTHORIZED=0
     ports:
-      - "3000:3000" 
+      - "3000:3000"  
 
   prometheus:
     image: prom/prometheus:latest
@@ -74,7 +74,9 @@ services:
     networks:
       - monitoring
     volumes:
-      - grafana-data:/var/lib/grafana
+     - grafana-data:/var/lib/grafana
+     - ./monitoring/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+     - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards
     depends_on:
       - minitwit-api
 
