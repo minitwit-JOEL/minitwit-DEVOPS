@@ -144,3 +144,26 @@ By inspecting the logs we found that the error occured because the api contianer
 that the web application authorizes itself to the api with.
 
 We fixed the bug by adding the JWT-token to the deploy script (and for local develop enviroment by adding it to the docker compose file).
+
+## Week 8
+
+### Multiple errors on the website
+
+We discovered that the website had multiple errors:
+- The public and private timeline were identical, except for the header
+- When logged in, the ability to post a twit were missing.
+- Pressing a users name in order to access the users timeline, resulted in an application error.
+- Pressing logout, did not result in any action / change.
+
+We observed that these errors did not exists on local enviroments, where our appsettings.json file were present.
+This lead us to believe that the enviroment variables where to blame.
+
+By debugging and inspecting values of the token obtained from the enviroment, we discovered that the program dit no read the token, from the .secrets file, in which enviroment variables are written in docker format.
+
+The solution was to change the way we read the variable in Program.cs and correct the format of the .secrets file.
+
+### Simulator rejecting correct API-key and latest endpoint falling behind
+
+After updating the format of .secrets file on the production enviroment, we had made a mistake, but not formatting the simulator api key correctly.
+
+After fixing this, the simulator accepted requests with the correct key again, and reponse form the latests endpoint, came up to date.
