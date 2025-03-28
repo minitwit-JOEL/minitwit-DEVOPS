@@ -75,8 +75,14 @@ services:
       - monitoring
     volumes:
      - grafana-data:/var/lib/grafana
+
+     # dashboards
      - ./monitoring/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards
+
+     # datasources
+     - ./monitoring/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+
     depends_on:
       - minitwit-api
 

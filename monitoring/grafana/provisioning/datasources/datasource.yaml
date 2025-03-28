@@ -1,7 +1,11 @@
 apiVersion: 1
+
 datasources:
-  - name: Prometheus
-    type: prometheus
-    access: proxy
-    url: http://prometheus:9090
+  - name: 'Prometheus'
+    type: 'prometheus'
+    url: 'http://prometheus:9090'
+    access: 'proxy'
     isDefault: true
+    editable: true
+    # (Optional) If you want a fixed UID, you can set it like this:
+    uid: 'prometheus-ds'
