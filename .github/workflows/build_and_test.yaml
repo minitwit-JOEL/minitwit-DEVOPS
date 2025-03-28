@@ -80,4 +80,4 @@ jobs:
         run: npm run build --if-present
       - name: Run ESLint
         working-directory: src/minitwit.Web
-        run: npx eslint "./**/*.{ts,tsx}"
+        run: npm run lint
