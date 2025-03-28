@@ -36,7 +36,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   }
 
   const messagesResponse = await fetch(
-    `${process.env.API_BASE_URL}api/twit/user/${username}`,
+    `${process.env.API_BASE_URL}api/twit/user/${username}?page=0`,
     {
       method: "GET",
       headers: {

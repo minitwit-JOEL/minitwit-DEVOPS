@@ -30,7 +30,7 @@ public class TwitsControllerSim : ControllerBase
         var messages = await _twitsService.GetMessages(latest, no);
         return Ok(messages);   
     }
-
+    
     [HttpGet("msgs/{username}")]
     public async Task<IActionResult> GetMessagesForUser(string username, [FromQuery] int latest, [FromQuery] int no = 100)
     {

@@ -37,7 +37,7 @@ public class TwitsService : ITwitsService
 
         return messages;
     }
-
+    
     public async Task<IEnumerable<MessageDto>> GetMessagesForUser(int latest, string username, int no)
     {
         await _simService.UpdateLatest(latest);
