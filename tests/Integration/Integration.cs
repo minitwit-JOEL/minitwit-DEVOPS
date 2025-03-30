@@ -75,13 +75,8 @@ public class IntegrationTests : IClassFixture<WebApplicationFactory<Program>>, I
     [Fact]
     public async Task Test_Login()
     {
+        // Arrange
         await _client.PostAsJsonAsync("/api/auth/register", new
-        {
-            Username = "testuser",
-            Password = "password123"
-        });
-
-        var response = await _client.PostAsJsonAsync("/api/auth/register", new
         {
             Username = "testuser",
             Password = "password123",
@@ -89,6 +84,15 @@ public class IntegrationTests : IClassFixture<WebApplicationFactory<Program>>, I
             Email = "testuser@example.com"
         });
 
+        // Act
+        var response = await _client.PostAsJsonAsync("/api/auth/login", new
+        {
+            Username = "testuser",
+            Password = "password123"
+        });
+
+        // Assert
         response.EnsureSuccessStatusCode();
     }
+
 }
