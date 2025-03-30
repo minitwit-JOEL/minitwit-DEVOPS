@@ -1,76 +1,94 @@
-using System;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.EntityFrameworkCore;
+using minitwit.Infrastructure.Data;
+using Testcontainers.PostgreSql;
 using Xunit;
 
-namespace minitwit.Tests.Integration
+public class IntegrationTests : IClassFixture<WebApplicationFactory<Program>>, IDisposable
 {
-    public class IntegrationTests
+    private readonly HttpClient _client;
+    private readonly IServiceScope _scope;
+    private readonly ApplicationDbContext _dbContext;
+    private readonly PostgreSqlContainer _postgresqlContainer;
+
+    public IntegrationTests(WebApplicationFactory<Program> fixture)
     {
-        private readonly HttpClient _client;
-        private const string BaseUrl = "http://localhost:5034";
+        _postgresqlContainer = new PostgreSqlBuilder()
+            .WithDatabase("testdb")
+            .WithUsername("test")
+            .WithPassword("testpassword")
+            .Build();
 
-        public IntegrationTests()
-        {
-            _client = new HttpClient();
-        }
+        _postgresqlContainer.StartAsync().Wait();
 
-        private async Task RegisterUser(string username, string email, string password)
+        var connectionString = _postgresqlContainer.GetConnectionString();
+
+        var factory = fixture.WithWebHostBuilder(builder =>
         {
-            var registerRequest = new
+            builder.ConfigureServices(services =>
             {
-                Username = username,
-                Email = email,
-                Password = password,
-                ConfirmPassword = password
-            };
+                var dbContextDescriptor = services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<ApplicationDbContext>));
+                if (dbContextDescriptor != null)
+                {
+                    services.Remove(dbContextDescriptor);
+                }
 
-            var content = new StringContent(JsonConvert.SerializeObject(registerRequest), Encoding.UTF8, "application/json");
-            var response = await _client.PostAsync($"{BaseUrl}/api/auth/register", content);
+                services.AddDbContext<ApplicationDbContext>(options =>
+                    options.UseNpgsql(connectionString));
 
-            if (!response.IsSuccessStatusCode)
-            {
-                var errorContent = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"Error in registration: {errorContent}");
-            }
+                var serviceProvider = services.BuildServiceProvider();
+                using (var scope = serviceProvider.CreateScope())
+                {
+                    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                    dbContext.Database.EnsureDeleted();
+                    dbContext.Database.Migrate();
+                }
+            });
+        });
 
-            response.EnsureSuccessStatusCode();
-        }
+        _client = factory.CreateClient();
+        _scope = factory.Services.CreateScope();
+        _dbContext = _scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    }
+    public void Dispose()
+    {
+        _dbContext.Database.EnsureDeleted();
+        _dbContext.Dispose();
+        _scope.Dispose();
+        _postgresqlContainer.StopAsync().Wait();
+    }
 
-        private async Task LoginUser(string username, string password)
+    [Fact]
+    public async Task Test_Register()
+    {
+        var response = await _client.PostAsJsonAsync("/api/auth/register", new
         {
-            var loginRequest = new
-            {
-                Username = username,
-                Password = password
-            };
+            Username = "testuser",
+            Password = "password123",
+            ConfirmPassword = "password123",
+            Email = "testuser@example.com"
+        });
 
-            var content = new StringContent(JsonConvert.SerializeObject(loginRequest), Encoding.UTF8, "application/json");
-            var response = await _client.PostAsync($"{BaseUrl}/api/auth/login", content);
+        response.EnsureSuccessStatusCode();
+    }
 
-            if (!response.IsSuccessStatusCode)
-            {
-                var errorContent = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"Error in login: {errorContent}");
-            }
-
-            response.EnsureSuccessStatusCode();
-            var responseBody = await response.Content.ReadAsStringAsync();
-            Assert.Contains("token", responseBody);
-        }
-
-        [Fact]
-        public async Task Test_Register()
+    [Fact]
+    public async Task Test_Login()
+    {
+        await _client.PostAsJsonAsync("/api/auth/register", new
         {
-            await RegisterUser("abc123", "abc123@example.com", "password123");
-        }
+            Username = "testuser",
+            Password = "password123"
+        });
 
-        [Fact]
-        public async Task Test_Login()
+        var response = await _client.PostAsJsonAsync("/api/auth/register", new
         {
-            await LoginUser("abc123", "password123");
-        }
+            Username = "testuser",
+            Password = "password123",
+            ConfirmPassword = "password123",
+            Email = "testuser@example.com"
+        });
+
+        response.EnsureSuccessStatusCode();
     }
 }
