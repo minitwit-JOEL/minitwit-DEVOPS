@@ -8,24 +8,17 @@ on:
     branches: [main, develop]
 
 jobs:
-  build_and_test:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 8.0.*
-
-      - name: Restore Dependencies
-        run: dotnet restore
-
-      - name: Build Solution (Including Tests)
-        run: dotnet build --configuration Debug --no-restore
-
-      - name: List Test Output (Debugging)
-        run: ls -R tests/Integration/bin/Debug/net8.0
-
-      - name: Run Tests
-        run: dotnet test --configuration Debug --verbosity normal
+      - name: Restore dependencies
+        run: dotnet restore src/minitwit.Api
+      - name: Build
+        run: dotnet build src/minitwit.Api --no-restore
+        name: Test
+        run: dotnet test --no-build --verbosity normal
