@@ -21,4 +21,4 @@ jobs:
       - name: Build .NET
         run: dotnet build src/minitwit.Api --no-restore
       - name: Test .NET
-        run: dotnet test --no-build --verbosity normal
+        run: dotnet test tests/Integration/Integration.csproj --no-build --verbosity normal
