@@ -1,4 +1,3 @@
-
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -22,7 +21,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDistributedMemoryCache();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddSession(options =>
 {
@@ -34,7 +33,7 @@ builder.Services.AddSession(options =>
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IFollowService, FollowService>();
 builder.Services.AddScoped<ITwitsService, TwitsService>();
-builder.Services.AddScoped<IUserService, UserSerivce>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 // SIM api
 builder.Services.AddScoped<minitwit.Application.Interfaces.Sim.IAuthService, minitwit.Application.Services.Sim.AuthService>();
@@ -57,14 +56,21 @@ builder.Services.AddCors(options =>
         });
 });
 
+var tokenKey = builder.Configuration.GetSection("Token:Key").Value;
+
+if (string.IsNullOrEmpty(tokenKey))
+{
+    throw new Exception("JWT Token Key is missing from configuration.");
+}
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetSection("Token:Key").Value)),
-            ValidIssuer = builder.Configuration.GetSection("Token:Issuer").Value, 
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenKey)),
+            ValidIssuer = builder.Configuration.GetSection("Token:Issuer").Value,
             ValidAudience = builder.Configuration.GetSection("Token:Audience").Value,
             ValidateIssuer = true,
             ValidateAudience = true,
@@ -75,7 +81,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 var app = builder.Build();
-
 
 if (!app.Environment.IsDevelopment())
 {
