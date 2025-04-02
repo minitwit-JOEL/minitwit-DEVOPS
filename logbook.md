@@ -133,7 +133,7 @@ With these fixes the workflow now makes working releases.
 
 ## Week 7
 
-### The website responded with an application error when we used our CD pipeline
+### Hotfix: The website responded with an application error when we used our CD pipeline
 
 We discovered that after our deploy workflow had finished the deployed web application responded with an application error.
 
@@ -144,3 +144,43 @@ By inspecting the logs we found that the error occured because the api contianer
 that the web application authorizes itself to the api with.
 
 We fixed the bug by adding the JWT-token to the deploy script (and for local develop enviroment by adding it to the docker compose file).
+
+## Week 8
+
+### Chore: Decreasing downtime when deploying
+
+When we created our deploy.sh script, we encountered an issue when starting the docker container with the api right after starting the contianer with the database, because the api tried to apply migrations before the the database was ready to accept connections.
+We then introduced a delay between the two of a minute.
+
+Since requests are now more frequent (several a minute), we need to decrease our downtime.
+
+We created a loop, which checkes the database health condition (if postgres is ready), and if not, sleeps for a second, repeating this until it is ready.
+
+We replaced the delay with this loop, such that we do not start the api contianer before the database is ready to accept connections.
+
+### Hotfix: Multiple errors on the website
+
+We discovered that the website had multiple errors:
+- The public and private timeline were identical, except for the header
+- When logged in, the ability to post a twit were missing.
+- Pressing a users name in order to access the users timeline, resulted in an application error.
+- Pressing logout, did not result in any action / change.
+
+We observed that these errors did not exists on local enviroments, where our appsettings.json file were present.
+This lead us to believe that the enviroment variables where to blame.
+
+By debugging and inspecting values of the token obtained from the enviroment, we discovered that the program dit no read the token, from the .secrets file, in which enviroment variables are written in docker format.
+
+The solution was to change the way we read the variable in Program.cs and correct the format of the .secrets file.
+
+### Hotfix: Simulator rejecting correct API-key and latest endpoint falling behind
+
+After updating the format of .secrets file on the production enviroment, we had made a mistake, but not formatting the simulator api key correctly.
+
+After fixing this, the simulator accepted requests with the correct key again, and reponse form the latests endpoint, came up to date.
+
+### Chore: Getting monitoring to work
+
+
+### Chore: Getting linters to work
+
