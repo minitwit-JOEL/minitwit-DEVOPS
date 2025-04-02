@@ -27,5 +27,5 @@ jobs:
           Token__Key: ${{ env.TOKEN__KEY }} 
           Token__Issuer: ${{ env.TOKEN__ISSUER }}
           Token__Audience: ${{ env.TOKEN__AUDIENCE }}
-          ConnectionStrings__DefaultConnection: ${{ env.CONNECTIONSTRINGS_DEFAULTCONNECTION }}
+          ConnectionStrings__DefaultConnection: ${{ env.CONNECTIONSTRINGS__DEFAULTCONNECTION }}
         run: dotnet test tests/Integration/Integration.csproj --verbosity normal
