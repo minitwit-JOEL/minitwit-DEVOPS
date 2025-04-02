@@ -36,7 +36,7 @@ export default function PublicTimelinePage() {
   const maxButtons = 6;
 
   let startPage = Math.max(0, currentPage - Math.floor(maxButtons / 2));
-  let endPage = Math.min(totalPages - 1, startPage + maxButtons - 1);
+  const endPage = Math.min(totalPages - 1, startPage + maxButtons - 1);
 
   if (endPage - startPage + 1 < maxButtons) {
     startPage = Math.max(0, endPage - maxButtons + 1);
