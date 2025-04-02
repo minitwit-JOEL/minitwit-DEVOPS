@@ -23,9 +23,9 @@ jobs:
         run: dotnet build src/minitwit.Api --no-restore
       - name: Test .NET
         env:
-          SIM_API_KEY: ${{ secrets.SIM_API_KEY }}
-          TOKEN__KEY: ${{ env.TOKEN__KEY }} 
-          TOKEN__ISSUER: ${{ env.TOKEN__ISSUER }}
-          TOKEN__AUDIENCE: ${{ env.TOKEN__AUDIENCE }}
-          CONNECTIONSTRINGS_DEFAULTCONNECTION: ${{ env.CONNECTIONSTRINGS_DEFAULTCONNECTION }}
+          SimApiAccess__Key: ${{ secrets.SIM_API_KEY }}
+          Token__Key: ${{ env.TOKEN__KEY }} 
+          Token__Issuer: ${{ env.TOKEN__ISSUER }}
+          Token__Audience: ${{ env.TOKEN__AUDIENCE }}
+          ConnectionStrings__DefaultConnection: ${{ env.CONNECTIONSTRINGS_DEFAULTCONNECTION }}
         run: dotnet test tests/Integration/Integration.csproj --verbosity normal
