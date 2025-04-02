@@ -3,9 +3,9 @@ on:
   workflow_dispatch:
   workflow_call:
   push:
-    branches: [main, develop]
+    branches: [main]
   pull_request:
-    branches: [main, develop]
+    branches: [main]
 
 jobs:
   build_and_test_NET:
@@ -22,4 +22,10 @@ jobs:
       - name: Build .NET
         run: dotnet build src/minitwit.Api --no-restore
       - name: Test .NET
-        run: dotnet test tests/Integration/Integration.csproj --verbosity normal -e ${{ secrets.SIM_API_KEY }} -e ${{ env.TOKEN__KEY }} -e ${{ env.TOKEN__ISSUER }} -e ${{ env.TOKEN__AUDIENCE }} -e ${{ env.CONNECTIONSTRINGS_DEFAULTCONNECTION }}
+        env:
+          SIM_API_KEY: ${{ secrets.SIM_API_KEY }}
+          TOKEN__KEY: ${{ env.TOKEN__KEY }} 
+          TOKEN__ISSUER: ${{ env.TOKEN__ISSUER }}
+          TOKEN__AUDIENCE: ${{ env.TOKEN__AUDIENCE }}
+          CONNECTIONSTRINGS_DEFAULTCONNECTION: ${{ env.CONNECTIONSTRINGS_DEFAULTCONNECTION }}
+        run: dotnet test tests/Integration/Integration.csproj --verbosity normal
