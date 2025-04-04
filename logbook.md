@@ -181,6 +181,16 @@ After fixing this, the simulator accepted requests with the correct key again, a
 
 ### Chore: Getting monitoring to work
 
+Monitoring was quite bothersome to get working for us, for several reassons.
+
+First and foremost there was a lot of understanding to do to just get a connection to grafana up and running. A lot of this understanding was gained by reading the relevant 
+documentation, and by getting it explained by chatGPT. 
+
+Our first issue we encountered was setting up the prometheus and grafana containers within our docker setting. From the help of TA's we learned that the prometheus and grafana yml files should target eachother within the docker network.
+
+Once this was setup we could now connect to the grafana dashboard and start designing our dashboard. We did this but no data was being gathered and displayed on the dashboard. We researched this issue on the web and using chatGPT, and gathered that we weren't providing our dashboard with a datasource.yml or a dashboard.yml file. We then did this and observed data being displayed.
+
+We then made a minimal dashboard that displays very basic information about the state of the site, the plan is to improve upon this. We then had to get this pushed up so we added all the relevant things to the deploy script and after a few itterations and changing the -volume tag to -v and so on we got it pushed to production and working. But we couldn't access port 3001, where our grafana dashboard runs. This was due to our firewall setup not allowing for connections on 3001, we quickly changed this and could observe the dashboard.  
 
 ### Chore: Getting linters to work
 
