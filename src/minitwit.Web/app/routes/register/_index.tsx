@@ -65,7 +65,7 @@ export const action: ActionFunction = async ({ request }) => {
 
     console.error("Registration failed:", responseData);
     return json({
-      message: `Registration failed: ${responseData?.message ?? 'Unknown error'}`,
+      message: `Registration failed: ${responseData?.message || 'Unknown error'}`,
     });
   }
 
