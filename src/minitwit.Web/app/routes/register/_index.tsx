@@ -13,6 +13,11 @@ interface ActionData {
   email?: string;
 }
 
+interface Error {
+  status: number;
+  error_msg: string;
+}
+
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
   const username = formData.get("username") as string;
@@ -54,19 +59,8 @@ export const action: ActionFunction = async ({ request }) => {
 
 
   if (!response.ok) {
-    const responseData = await response.json();
-    if (responseData?.error_msg === "The username is already taken") {
-      return json({
-        message: "Username is already taken. Please choose another one.",
-        username: username,
-        email: email,
-      });
-    }
-
-    console.error("Registration failed:", responseData);
-    return json({
-      message: `Registration failed: ${responseData?.message ?? 'Unknown error'}`,
-    });
+    const responseData: Error  = await response.json();
+    return json({ message: responseData.error_msg });
   }
 
 
