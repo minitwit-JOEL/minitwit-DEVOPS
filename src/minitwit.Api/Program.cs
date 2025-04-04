@@ -77,13 +77,6 @@ builder.Services.AddCors(options =>
         });
 });
 
-var tokenKey = builder.Configuration.GetSection("Token:Key").Value;
-
-if (string.IsNullOrEmpty(tokenKey))
-{
-    Console.WriteLine("Token key is not set");
-}
-
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
