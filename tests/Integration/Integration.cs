@@ -70,6 +70,7 @@ public class IntegrationTests : IClassFixture<WebApplicationFactory<Program>>, I
         });
 
         response.EnsureSuccessStatusCode();
+        Assert.NotNull(response);
     }
 
     [Fact]
@@ -93,6 +94,7 @@ public class IntegrationTests : IClassFixture<WebApplicationFactory<Program>>, I
 
         // Assert
         response.EnsureSuccessStatusCode();
+        Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);
     }
 
 }

@@ -81,7 +81,7 @@ var tokenKey = builder.Configuration.GetSection("Token:Key").Value;
 
 if (string.IsNullOrEmpty(tokenKey))
 {
-    throw new Exception("JWT Token Key is missing from configuration.");
+    throw new ArgumentNullException("JWT Token Key is missing from configuration.");
 }
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -136,4 +136,7 @@ using (var scope = app.Services.CreateScope())
 
 app.Run();
 
-public partial class Program { }
+public partial class Program
+{
+    protected Program() { }
+}
