@@ -23,7 +23,7 @@ public class AuthController : ControllerBase
         _authService = authService;
         _configuration = configuration;
         var jwtKey = configuration.GetValue<string>("Token:Key");
-        var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
+        var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey!));
         _signingCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
     }
 
@@ -75,7 +75,10 @@ public class AuthController : ControllerBase
         {
             return BadRequest("User is already logged out");
         }
-
+        
+        Response.Cookies.Delete("__session");
+        await Task.CompletedTask;
+        
         return Ok();
     }
 
@@ -92,7 +95,7 @@ public class AuthController : ControllerBase
             var errorResponse = new { status = 400, error_msg = ex.Message };
             return BadRequest(errorResponse);
         }
-        catch (Exception e)
+        catch (Exception)
         {
             var errorResponse = new { status = 500, error_msg = "An unexpected error occurred." };
             return StatusCode(500, errorResponse);

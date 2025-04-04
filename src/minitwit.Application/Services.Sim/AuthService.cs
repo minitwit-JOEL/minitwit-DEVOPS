@@ -36,7 +36,7 @@ public class AuthService : IAuthService
             return Result.Failure("You have to enter a password");
         }
 
-        if (await _dbContext.Users.AnyAsync(u => u.Username == username))
+        if (await _dbContext.Users!.AnyAsync(u => u.Username == username))
         {
             return Result.Failure("The username is already taken");
         }
