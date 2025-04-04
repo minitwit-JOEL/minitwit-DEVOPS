@@ -81,7 +81,7 @@ var tokenKey = builder.Configuration.GetSection("Token:Key").Value;
 
 if (string.IsNullOrEmpty(tokenKey))
 {
-    throw new ArgumentNullException("JWT Token Key is missing from configuration.");
+    Console.WriteLine("Token key is not set");
 }
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
