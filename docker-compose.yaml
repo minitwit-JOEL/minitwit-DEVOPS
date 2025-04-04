@@ -1,46 +1,116 @@
 version: '3.9'
 services:
   db:
+    deploy: 
+      resources:
+        limits:
+          memory: 128m
     image: postgres:latest
     container_name: minitwit-db
+    networks:
+      - monitoring
     env_file:
       - .secrets
+    ports:
+      - "5432:5432"
     healthcheck:
       #This command checks if the database is ready, right on the source db server
       test: [ "CMD-SHELL", "pg_isready" ]
+      start_period: 10s
       interval: 5s
-      timeout: 5s
-      retries: 5
-    ports:
-      - "5432:5432"
+      timeout: 10s
+      retries: 25
     volumes:
-      - db-data:/var/lib/postgresql/data
+    - db-data:/var/lib/postgresql/data
 
   minitwit-api:
+    deploy: 
+      resources:
+        limits:
+          memory: 512m
     build:
       context: .
       dockerfile: ./src/minitwit.Api/Dockerfile
     container_name: minitwit-api
+    networks:
+      - monitoring
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     env_file:
       - .secrets
     ports:
       - "8080:8080"
       - "8081:8081"
+    healthcheck:
+      # This commands pings the /latest simulator endpoint
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/sim/latest"]
+      interval: 2s
+      timeout: 30s
+      retries: 20
 
   web:
+    deploy: 
+      resources:
+        limits:
+          memory: 256m
     build:
       context: ./src/minitwit.Web
       dockerfile: Dockerfile
     container_name: minitwit-web
+    networks:
+      - monitoring
     depends_on:
-      - minitwit-api
+      minitwit-api:
+        condition: service_healthy
     environment:
       - API_BASE_URL=http://minitwit-api:8080/
       - NODE_TLS_REJECT_UNAUTHORIZED=0
     ports:
       - "3000:3000"
+    healthcheck:
+      # This commands pings the index endpoint
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 2s
+      timeout: 30s
+      retries: 20
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - monitoring
+    depends_on:
+      - minitwit-api  
+  grafana:
+      image: grafana/grafana:10.2.4
+      container_name: grafana
+      ports:
+        - "3001:3000"
+      networks:
+        - monitoring
+      volumes:
+      - grafana-data:/var/lib/grafana
+      # dashboards
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+      # datasources
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      depends_on:
+        - minitwit-api
+
+
+networks:
+  monitoring:
+    external: false 
+    name: monitoring
+    driver: bridge
 
 volumes:
   db-data:
+  prometheus-data:
+  grafana-data:
