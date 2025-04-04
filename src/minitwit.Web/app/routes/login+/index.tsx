@@ -6,7 +6,6 @@ import {
 } from "@remix-run/node";
 import {Form, redirect, useActionData } from "@remix-run/react";
 import { createUserSession, getUserSession } from "~/util/session.server";
-import {ActionData} from "~/routes/user+/$username";
 
 export const meta: MetaFunction = () => {
   return [{ title: "Sign In | MiniTwit" }];
