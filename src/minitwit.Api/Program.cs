@@ -15,6 +15,8 @@ using IFollowService = minitwit.Application.Interfaces.IFollowService;
 using ITwitsService = minitwit.Application.Interfaces.ITwitsService;
 using TwitsService = minitwit.Application.Services.TwitsService;
 using minitwit.Infrastructure.Dtos.Sim;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,6 +44,18 @@ builder.Services.AddScoped<minitwit.Application.Interfaces.Sim.ITwitsService, mi
 builder.Services.AddScoped<ISimService, SimService>();
 
 builder.Services.Configure<SimApiAccess>(builder.Configuration.GetSection("SimApiAccess"));
+
+var resourceBuilder = ResourceBuilder.CreateDefault()
+    .AddService("minitwit-api", serviceVersion: "1.0.0");
+
+builder.Services.AddOpenTelemetry().WithMetrics(providerBuilder =>
+{
+    providerBuilder.SetResourceBuilder(resourceBuilder);
+    providerBuilder.AddAspNetCoreInstrumentation();
+    providerBuilder.AddHttpClientInstrumentation();
+    providerBuilder.AddMeter("Microsoft.AspNetCore.Hosting", "Microsoft.AspNetCore.Server.Kestrel");
+    providerBuilder.AddPrometheusExporter();
+});
 
 builder.Services.AddControllers();
 builder.Services.AddCors(options =>
@@ -92,6 +106,8 @@ else
 {
     app.UseCors("DevelopmentOrigins");
 }
+
+app.MapPrometheusScrapingEndpoint();
 
 app.UseHttpsRedirection();
 app.UseRouting();
