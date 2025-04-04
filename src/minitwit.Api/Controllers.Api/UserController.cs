@@ -31,7 +31,7 @@ public class UserController : ControllerBase
 
         return Ok(new
         {
-            id = user.Id,
+            id = user!.Id,
             username = user.Username,
             email = user.Email,
         });
@@ -51,7 +51,7 @@ public class UserController : ControllerBase
 
         return Ok(new
         {
-            id = user.Id,
+            id = user!.Id,
             username = user.Username,
             email = user.Email,
         });
