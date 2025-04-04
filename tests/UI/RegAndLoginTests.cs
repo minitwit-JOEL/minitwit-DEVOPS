@@ -1,6 +1,14 @@
+using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Playwright;
+using minitwit.Infrastructure.Data;
+using Testcontainers.PostgreSql;
+using System;
+using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace UI.Tests
 {
@@ -9,37 +17,81 @@ namespace UI.Tests
         private IPlaywright _playwright;
         private IBrowser _browser;
         private IPage _page;
+        private HttpClient _client;
+        private PostgreSqlContainer _postgresqlContainer;
+        private IServiceScope _scope;
+        private ApplicationDbContext _dbContext;
 
         public RegisterAndLoginTests()
         {
             _playwright = Playwright.CreateAsync().Result;
+
+            _postgresqlContainer = new PostgreSqlBuilder()
+                .WithDatabase("testdb")
+                .WithUsername("test")
+                .WithPassword("testpassword")
+                .Build();
+            _postgresqlContainer.StartAsync().Wait();
         }
 
         public async Task InitializeAsync()
         {
+            var connectionString = _postgresqlContainer.GetConnectionString();
+
+            var factory = new WebApplicationFactory<Program>()
+                .WithWebHostBuilder(builder =>
+                {
+                    builder.ConfigureServices(services =>
+                    {
+                        var dbContextDescriptor = services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<ApplicationDbContext>));
+                        if (dbContextDescriptor != null)
+                        {
+                            services.Remove(dbContextDescriptor);
+                        }
+
+                        services.AddDbContext<ApplicationDbContext>(options =>
+                            options.UseNpgsql(connectionString));
+
+                        var serviceProvider = services.BuildServiceProvider();
+                        using (var scope = serviceProvider.CreateScope())
+                        {
+                            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                            dbContext.Database.EnsureDeleted();
+                            dbContext.Database.Migrate();
+                        }
+                    });
+                });
+
+            _client = factory.CreateClient();
+
             _browser = await _playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions { Headless = false });
             _page = await _browser.NewPageAsync();
         }
 
         public async Task DisposeAsync()
         {
-            if (_browser != null)
-            {
-                await _browser.CloseAsync();
-            }
+            await _browser.CloseAsync();
+            await _postgresqlContainer.StopAsync();
+
+            _scope?.Dispose();
+            _dbContext?.Dispose();
         }
 
         [Fact]
         public async Task Test_Register_And_Login_User_Via_UI()
         {
-            await _page.GotoAsync("http://localhost:3100/register");
-
-            await _page.WaitForSelectorAsync("input[name='username']");
-
-            string username = "Me";
-            string email = "me@some.where";
+            string username = "testuser_" + Guid.NewGuid().ToString("N");
+            string email = username + "@some.where";
             string password = "secure123";
 
+            await _page.GotoAsync("http://localhost:3100/register");
+
+            await _page.WaitForSelectorAsync("input[name='username']", new PageWaitForSelectorOptions { Timeout = 10000 });
+            await _page.WaitForSelectorAsync("input[name='email']", new PageWaitForSelectorOptions { Timeout = 10000 });
+            await _page.WaitForSelectorAsync("input[name='password']", new PageWaitForSelectorOptions { Timeout = 10000 });
+            await _page.WaitForSelectorAsync("input[name='passwordRepeat']", new PageWaitForSelectorOptions { Timeout = 10000 });
+
+            // Fill out the registration form
             await _page.FillAsync("input[name='username']", username);
             await _page.FillAsync("input[name='email']", email);
             await _page.FillAsync("input[name='password']", password);
@@ -63,7 +115,6 @@ namespace UI.Tests
 
             await _page.FillAsync("input[name='username']", username);
             await _page.FillAsync("input[name='password']", password);
-
             await _page.ClickAsync("input[type='submit'][value='Sign In']");
 
             try
