@@ -4,8 +4,9 @@ import {
   LoaderFunction,
   MetaFunction,
 } from "@remix-run/node";
-import { Form, redirect } from "@remix-run/react";
+import {Form, redirect, useActionData } from "@remix-run/react";
 import { createUserSession, getUserSession } from "~/util/session.server";
+import {ActionData} from "~/routes/user+/$username";
 
 export const meta: MetaFunction = () => {
   return [{ title: "Sign In | MiniTwit" }];
@@ -51,9 +52,16 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function SignInPage() {
+  const actionData = useActionData<typeof action>()
+
   return (
     <div>
       <h2>Sign In</h2>
+      {actionData?.message && (
+          <div className="error">
+            <strong>Error:</strong> {actionData.message}
+          </div>
+      )}
       <Form method="post">
         <dl>
           <dt>Username:</dt>

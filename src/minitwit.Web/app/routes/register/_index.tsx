@@ -13,6 +13,11 @@ interface ActionData {
   email?: string;
 }
 
+interface Error {
+  status: number;
+  error_msg: string;
+}
+
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
   const username = formData.get("username") as string;
@@ -46,8 +51,8 @@ export const action: ActionFunction = async ({ request }) => {
   });
 
   if (!response.ok) {
-    const responseData = await response.json();
-    throw new Error(responseData.detail);
+    const responseData: Error  = await response.json();
+    return json({ message: responseData.error_msg });
   }
 
   return redirect("/login");
