@@ -24,8 +24,8 @@ jobs:
       - name: Test .NET
         env:
           SimApiAccess__Key: ${{ secrets.SIM_API_KEY }}
-          Token__Key: ${{ env.TOKEN__KEY }} 
-          Token__Issuer: ${{ env.TOKEN__ISSUER }}
-          Token__Audience: ${{ env.TOKEN__AUDIENCE }}
-          ConnectionStrings__DefaultConnection: ${{ env.CONNECTIONSTRINGS__DEFAULTCONNECTION }}
-        run: dotnet test tests/Integration/Integration.csproj --verbosity normal
+          Token__Key: ${{ secrets.TOKEN__KEY }}
+          Token__Issuer: ${{ secrets.TOKEN__ISSUER }}
+          Token__Audience: ${{ secrets.TOKEN__AUDIENCE }}
+          ConnectionStrings__DefaultConnection: ${{ secrets.CONNECTIONSTRINGS__DEFAULTCONNECTION }}
+        run: dotnet test --verbosity normal
