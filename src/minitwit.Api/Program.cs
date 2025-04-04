@@ -77,20 +77,13 @@ builder.Services.AddCors(options =>
         });
 });
 
-var tokenKey = builder.Configuration.GetSection("Token:Key").Value;
-
-if (string.IsNullOrEmpty(tokenKey))
-{
-    Console.WriteLine("Token key is not set");
-}
-
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenKey)),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetSection("Token:Key").Value)),
             ValidIssuer = builder.Configuration.GetSection("Token:Issuer").Value,
             ValidAudience = builder.Configuration.GetSection("Token:Audience").Value,
             ValidateIssuer = true,
