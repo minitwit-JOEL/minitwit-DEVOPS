@@ -85,6 +85,10 @@ jobs:
       - name: Restore .NET tools
         run: dotnet tool restore
 
+      - name: Install Playwright Browsers
+        run: |
+          npx playwright install
+
       - name: Test .NET
         env:
           SimApiAccess__Key: ${{ secrets.SIM_API_KEY }}
