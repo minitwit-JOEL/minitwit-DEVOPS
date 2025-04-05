@@ -84,7 +84,7 @@ namespace UI.Tests
             string email = username + "@some.where";
             string password = "secure123";
 
-            await _page.GotoAsync("http://localhost:3100/register");
+            await _page.GotoAsync("http://localhost:3100/register", new PageGotoOptions { Timeout = 15000 });
 
             await _page.WaitForSelectorAsync("input[name='username']", new PageWaitForSelectorOptions { Timeout = 10000 });
             await _page.WaitForSelectorAsync("input[name='email']", new PageWaitForSelectorOptions { Timeout = 10000 });
