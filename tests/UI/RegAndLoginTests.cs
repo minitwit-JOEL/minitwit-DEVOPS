@@ -14,13 +14,13 @@ namespace UI.Tests
 {
     public class RegisterAndLoginTests : IAsyncLifetime
     {
-        private IPlaywright _playwright;
+        private readonly IPlaywright _playwright;
         private IBrowser _browser;
         private IPage _page;
         private HttpClient _client;
-        private PostgreSqlContainer _postgresqlContainer;
-        private IServiceScope _scope;
-        private ApplicationDbContext _dbContext;
+        private readonly PostgreSqlContainer _postgresqlContainer;
+        private readonly IServiceScope _scope;
+        private readonly ApplicationDbContext _dbContext;
 
         public RegisterAndLoginTests()
         {

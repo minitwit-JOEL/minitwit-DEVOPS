@@ -31,7 +31,12 @@
   </ItemGroup>
 
   <ItemGroup>
-     <InternalsVisibleTo Include="Program" />
-</ItemGroup>
+    <InternalsVisibleTo Include="Program" />
+  </ItemGroup>
+
+ <Target Name="PlaywrightInstall" AfterTargets="Build">
+  <Exec Command="dotnet tool restore" />
+  <Exec Command="dotnet playwright install" />
+</Target>
 
 </Project>
