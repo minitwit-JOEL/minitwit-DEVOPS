@@ -65,34 +65,34 @@ jobs:
         working-directory: src/minitwit.Web
         run: npm run lint
 
-    build_and_test_NET:
-      runs-on: ubuntu-latest
-      environment: local_appsettings
-      steps:
-        - uses: actions/checkout@v4
+  build_and_test_NET:
+    runs-on: ubuntu-latest
+    environment: local_appsettings
+    steps:
+      - uses: actions/checkout@v4
 
-        - name: Setup .NET
-          uses: actions/setup-dotnet@v3
-          with:
-            dotnet-version: 8.0.*
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.0.*
 
-        - name: Restore dependencies .NET
-          run: dotnet restore
+      - name: Restore dependencies .NET
+        run: dotnet restore
 
-        - name: Build .NET
-          run: dotnet build src/minitwit.Api --no-restore
+      - name: Build .NET
+        run: dotnet build src/minitwit.Api --no-restore
 
-        - name: Install Playwright Browsers
-          run: dotnet tool restore && dotnet playwright install
+      - name: Install Playwright Browsers
+        run: dotnet tool restore && dotnet playwright install
 
-        - name: Test .NET
-          env:
-            SimApiAccess__Key: ${{ secrets.SIM_API_KEY }}
-            Token__Key: ${{ secrets.TOKEN__KEY }}
-            Token__Issuer: ${{ secrets.TOKEN__ISSUER }}
-            Token__Audience: ${{ secrets.TOKEN__AUDIENCE }}
-            ConnectionStrings__DefaultConnection: ${{ secrets.CONNECTIONSTRINGS__DEFAULTCONNECTION }}
-          run: dotnet test --verbosity normal
+      - name: Test .NET
+        env:
+          SimApiAccess__Key: ${{ secrets.SIM_API_KEY }}
+          Token__Key: ${{ secrets.TOKEN__KEY }}
+          Token__Issuer: ${{ secrets.TOKEN__ISSUER }}
+          Token__Audience: ${{ secrets.TOKEN__AUDIENCE }}
+          ConnectionStrings__DefaultConnection: ${{ secrets.CONNECTIONSTRINGS__DEFAULTCONNECTION }}
+        run: dotnet test --verbosity normal
 
   build_and_test_web:
     runs-on: ubuntu-latest
