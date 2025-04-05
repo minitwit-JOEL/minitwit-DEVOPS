@@ -25,9 +25,6 @@ export const action: ActionFunction = async ({ request }) => {
   const password = formData.get("password") as string;
   const passwordRepeat = formData.get("passwordRepeat") as string;
 
-  // Log the form data for debugging purposes
-  console.log("Form Data:", { username, email, password, passwordRepeat });
-
   const registerRequestDto: RegisterRequestDto = {
     username: username,
     email: email,
@@ -36,20 +33,16 @@ export const action: ActionFunction = async ({ request }) => {
   };
 
   if (!username || !email || !password || !passwordRepeat) {
-    console.log("Form validation failed: Missing fields");
     return json({ message: "Please fill in all fields" });
   }
 
   if (password !== passwordRepeat) {
-    console.log("Password mismatch:", { password, passwordRepeat });
     return json({
       message: "Passwords do not match.",
       username: username,
       email: email,
     });
   }
-
-  console.log("Sending data to API:", registerRequestDto);
 
   const response = await fetch(`${process.env.API_BASE_URL}api/auth/register`, {
     method: "POST",
@@ -63,8 +56,6 @@ export const action: ActionFunction = async ({ request }) => {
     return json({ message: responseData.error_msg });
   }
 
-
-  console.log("Registration successful");
   return redirect("/login");
 };
 
