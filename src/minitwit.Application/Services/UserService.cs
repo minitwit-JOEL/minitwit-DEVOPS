@@ -5,11 +5,11 @@ using minitwit.Infrastructure.Data;
 
 namespace minitwit.Application.Services;
 
-public class UserSerivce : IUserService
+public class UserService : IUserService
 {
     private readonly ApplicationDbContext _dbContext;
 
-    public UserSerivce(ApplicationDbContext dbContext)
+    public UserService(ApplicationDbContext dbContext)
     {
         _dbContext = dbContext;
     }
