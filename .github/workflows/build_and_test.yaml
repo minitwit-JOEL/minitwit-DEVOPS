@@ -82,8 +82,8 @@ jobs:
       - name: Build .NET
         run: dotnet build src/minitwit.Api --no-restore
 
-      - name: Install Playwright Browsers
-        run: dotnet tool restore && dotnet playwright install
+      - name: Restore .NET tools
+        run: dotnet tool restore
 
       - name: Test .NET
         env:
