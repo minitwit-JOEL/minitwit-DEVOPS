@@ -64,7 +64,7 @@ namespace UI.Tests
 
             _client = factory.CreateClient();
 
-            _browser = await _playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions { Headless = false });
+            _browser = await _playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions { Headless = true });
             _page = await _browser.NewPageAsync();
         }
 
