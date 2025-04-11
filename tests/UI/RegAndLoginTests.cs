@@ -9,6 +9,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 using Microsoft.Extensions.DependencyInjection;
+using System.Diagnostics;
 
 namespace UI.Tests
 {
@@ -22,6 +23,28 @@ namespace UI.Tests
         private readonly IServiceScope _scope;
         private readonly ApplicationDbContext _dbContext;
 
+        private async Task WaitForServerAsync(string url, int timeoutInSeconds = 30)
+        {
+            using var client = new HttpClient();
+            var stopWatch = Stopwatch.StartNew();
+            while (stopWatch.Elapsed < TimeSpan.FromSeconds(timeoutInSeconds))
+            {
+                try
+                {
+                    var response = await client.GetAsync(url);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        return; // Server is ready
+                    }
+                }
+                catch
+                {
+                    // Ignore exceptions and retry
+                }
+                await Task.Delay(1000); // Wait 1 second before retrying
+            }
+            throw new Exception($"Server at {url} did not respond within {timeoutInSeconds} seconds.");
+        }
         public RegisterAndLoginTests()
         {
             _playwright = Playwright.CreateAsync().Result;
@@ -76,6 +99,12 @@ namespace UI.Tests
             _scope?.Dispose();
             _dbContext?.Dispose();
         }
+        [SetUp]
+        public async Task SetUp()
+        {
+            // Wait for the server to be ready
+            await WaitForServerAsync("http://localhost:3100/register");
+        }
 
         [Fact]
         public async Task Test_Register_And_Login_User_Via_UI()
@@ -129,5 +158,9 @@ namespace UI.Tests
                 Console.WriteLine($"Error during login: {ex.Message}");
             }
         }
+    }
+
+    internal class SetUpAttribute : Attribute
+    {
     }
 }
