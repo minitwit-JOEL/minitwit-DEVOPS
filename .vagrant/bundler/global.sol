@@ -1,0 +1,1 @@
+{"dependencies":[["log4r",[">= 0"]],["json",[">= 0"]],["logger",[">= 0"]],["uri",[">= 0"]],["net-http",[">= 0"]],["faraday-net_http",[">= 2.0","< 3.4"]],["faraday",[">= 0.8.6"]],["vagrant-digitalocean",["= 0.9.6"]]],"checksum":"ddf8c9690978c23c2c275ff0154d161ca57f6c591cd4bc23e56357324c92589a","vagrant_version":"2.4.3"}
