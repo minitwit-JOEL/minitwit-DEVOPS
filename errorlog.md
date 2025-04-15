@@ -1,5 +1,13 @@
 Simulator monitor panel: http://206.81.20.113/status.html
 
+15/4/2025 09:53:
+
+Follow: 589372
+Unfollow: 186940
+Register: 268
+Tweets: 13699
+ConnectionError: 3006
+
 28/3/2025 14:00:
 
 Follow: 589372
