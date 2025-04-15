@@ -2,11 +2,13 @@
 
 Vagrant.configure("2") do |config|
   config.vm.box = 'digital_ocean'
-  config.vm.provision "file", source: "deploy.sh", destination: "deploy.sh"
+  config.vm.synced_folder ".", "/vagrant", disabled: true
+  config.vm.provision "file", source: "deploy.sh", destination: "/home/vagrant/deploy.sh"
+  config.vm.provision "file", source: ".secrets-production", destination: "/home/vagrant/.secrets-production"
   config.ssh.private_key_path = '~/.ssh/id_rsa'
   config.ssh.insert_key = false
 
-  config.vm.define "web-droplet-0" do |config|
+  config.vm.define "web-droplet-0" do |server|
     config.vm.provider :digital_ocean do |provider, override|
       provider.token = ENV["DIGITAL_OCEAN_TOKEN"]
       provider.image = 'ubuntu-22-04-x64'
@@ -22,6 +24,14 @@ Vagrant.configure("2") do |config|
     server.vm.hostname = "web-droplet-0"
 
     server.vm.provision "shell", inline: <<-SHELL
+
+      # Wait for any other apt process to finish
+      while fuser /var/lib/apt/lists/lock >/dev/null 2>&1; do
+        echo "Waiting for apt lock to be released..."
+        sleep 1
+      done
+
+      echo "apt lock is released"
 
       # Following official docker installation: https://docs.docker.com/engine/install/ubuntu/
 
@@ -39,7 +49,13 @@ Vagrant.configure("2") do |config|
         sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
       sudo apt-get update
 
-      sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+      sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    SHELL
+
+    # Run deploy.sh
+    server.vm.provision "shell", inline: <<-SHELL
+      chmod +x /home/vagrant/deploy.sh
+      /home/vagrant/deploy.sh
     SHELL
   end
 end
