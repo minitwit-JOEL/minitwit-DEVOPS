@@ -5,6 +5,7 @@ Vagrant.configure("2") do |config|
   config.vm.synced_folder ".", "/vagrant", disabled: true
   config.vm.provision "file", source: "deploy.sh", destination: "/home/vagrant/deploy.sh"
   config.vm.provision "file", source: ".secrets-production", destination: "/home/vagrant/.secrets-production"
+  config.vm.provision "dir"
   config.ssh.private_key_path = '~/.ssh/id_rsa'
   config.ssh.insert_key = false
 
