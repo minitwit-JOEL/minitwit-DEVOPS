@@ -4,7 +4,7 @@ docker image pull lukan707/minitwit-joel-web:latest
 docker image pull prom/prometheus:latest
 docker image pull grafana/grafana:10.2.4
 
-docker rm -f "$(docker ps -aq)"
+docker rm -f $(docker ps -aq)
 
 docker network create minitwit-network
 

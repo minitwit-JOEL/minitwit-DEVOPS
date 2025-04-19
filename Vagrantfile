@@ -3,9 +3,12 @@
 Vagrant.configure("2") do |config|
   config.vm.box = 'digital_ocean'
   config.vm.synced_folder ".", "/vagrant", disabled: true
-  config.vm.provision "file", source: "deploy.sh", destination: "/home/vagrant/deploy.sh"
-  config.vm.provision "file", source: ".secrets-production", destination: "/home/vagrant/.secrets-production"
-  config.vm.provision "dir"
+  config.vm.provision "file", source: "deploy.sh", destination: "/home/github/deploy.sh"
+  config.vm.provision "file", source: ".secrets-production", destination: "/home/github/.secrets-production"
+  config.vm.provision "file", source: "prometheus/prometheus.yml", destination: "/home/github/prometheus/prometheus.yml"
+  config.vm.provision "file", source: "grafana/dashboards/work_in_progress_dashboard.json", destination: "/home/github/grafana/dashboards/work_in_progress_dashboard.json"
+  config.vm.provision "file", source: "grafana/provisioning/dashboards/dashboard.yaml", destination: "/home/github/grafana/provisioning/dashboards/dashboard.yaml"
+  config.vm.provision "file", source: "grafana/provisioning/datasources/datasource.yaml", destination: "/home/github/grafana/provisioning/datasources/datasource.yaml"
   config.ssh.private_key_path = '~/.ssh/id_rsa'
   config.ssh.insert_key = false
 
@@ -55,8 +58,11 @@ Vagrant.configure("2") do |config|
 
     # Run deploy.sh
     server.vm.provision "shell", inline: <<-SHELL
-      chmod +x /home/vagrant/deploy.sh
-      /home/vagrant/deploy.sh
+      sudo useradd -m github -g docker
+      chmod +x /home/github/deploy.sh
+      # Add the github public keys to ssh file
+      cd /home/github/
+      /home/github/deploy.sh
     SHELL
   end
 end

@@ -5,9 +5,13 @@ Either way, the application is dependent on certain enviroment variables, which 
 
 # Dependencies
 
-Both docker compose and deploy.sh are dependen on a file called .secrets located in the root directory:
+Both docker compose and deploy.sh are dependen on a file called either .secrets-local for local developing,
+or .secrets-production for the production enviroment.
 
-```/.secrets```
+Both are located in the root directory:
+
+```/.secrets-local```
+```/.secrets-production```
 
 A file called appsettings.json can also be sat, if one wants to run the dotnet application without continarization.
 It should have the following structure, and reside in the parth src/minitwit.Api/apisettings.json:
@@ -73,6 +77,38 @@ the containers can be brought up by running the following command in the root di
 /.deploy.sh
 ```
 
+# Provisioning the web droplet (VM) with Vagrant
+
+Please note that the following action, re-provision the VM('s) on digitalocean containing the API- and webserver.
+
+On purpose, the VM with the database is not defined within the Vagrantfile, and thus can not be provisioned
+with the following steps.
+This is in order to ensure data consistency and the data of the database not being deleted on accident.
+
+## Dependencies
+
+To be able to provision the VM('s) with Vagrant the following dependencies must be in place:
+
+- Vagrant must be installed
+- .secrets-production file at the location /.secrets-production
+- The <a href="https://github.com/devopsgroup-io/vagrant-digitalocean"><span>'vagrant-digitalocean'</span></a> plugin must be installed
+- A digital-ocean token must be set as an enviroment variable with following name:
+  ```sh
+  DIGITAL_OCEAN_TOKEN
+  ```
+- If running on WSL the following enviroment variable must be set:
+  ```sh
+  export VAGRANT_WSL_ENABLE_WINDOWS_ACCESS="1"  
+  ```
+
+## Provision
+
+To provision the VM('s) on digitalocean one must stand in the root directory of the project, and run the following command:
+
+```sh
+vagrant provision
+```
+
 # Viewing the web application
 
 ## Localhost
@@ -109,7 +145,7 @@ The monitoring dashboard can be found at <http://localhost:9090>
 
 ## Viewing metrics on production
 
-The monitoring dashboard can be found at
+The monitoring dashboard can be found at <http://67.207.72.167:3001>
 
 # Manually triggering the deploy.sh script
 
