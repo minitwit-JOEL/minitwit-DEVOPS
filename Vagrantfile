@@ -102,9 +102,10 @@ Vagrant.configure("2") do |config|
       doctl compute firewall add-droplets "$FIREWALL_ID" --droplet-ids "$DROPLET_ID"
       
       # Allow this droplet to reach the database
-      if doctl compute firewall list-by-droplet "$DROPLET_ID" --format "InboundRules" | awk -v ip="$DROPLET_IP" '$0 ~ "protocol:tcp,ports:5432,address:"ip"$"'; then
+      if doctl compute firewall list-by-droplet "$DROPLET_ID" --format "InboundRules" | grep -q "protocol:tcp,ports:5432,address:$DROPLET_IP"; then
         echo "Droplet is already allowed to contact 5432"
       else
+        echo "Allowing droplet to contact 5432"
         doctl compute firewall add-rules "$FIREWALL_ID" --inbound-rules "protocol:tcp,ports:5432,address:$DROPLET_IP/32"
       fi
     SHELL
