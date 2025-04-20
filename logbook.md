@@ -224,3 +224,15 @@ Before the vagrant file can be used to provision a new VM, it is necesarry to al
 
 We can add / edit an exisitng firewall by using the digital ocean Command Line Interface (doctl), before we execute the deploy.sh script.
 
+We also got the following error when running ```sh vagrant up``` or ```sh vagrant rebuild``` we got the following error:
+
+```sh
+web-droplet-0: Reading package lists...
+web-droplet-0: E: Could not get lock /var/lib/dpkg/lock-frontend. It is held by process 2274 (apt-get)
+web-droplet-0: E: Unable to acquire the dpkg frontend lock (/var/lib/dpkg/lock-frontend), is another process using it?
+```
+
+We solved this by checking if the apt-get lock or dpkg lock is free, each time before we use it.
+
+Please note: Sometimes we still have a race condition, where even though we just checked, the lock are not free when we try to aquire it.
+In this case it should be sufficient to re-run the vagrantfile.

@@ -77,6 +77,8 @@ the containers can be brought up by running the following command in the root di
 /.deploy.sh
 ```
 
+Please note, that this action does not rebuild the containers from the local enviroment, but pulls the latest containers from the Docker Hub repository.
+
 # Provisioning the web droplet (VM) with Vagrant
 
 Please note that the following action, re-provision the VM('s) on digitalocean containing the API- and webserver.
