@@ -64,10 +64,13 @@ jobs:
               env:
                 SSH_KEY: ${{ secrets.SSH_KEY }}
         
-            - name: Deploy to server
+            - name: Deploy to servers
                 # Configure the ~./bash_profile and deploy.sh file on the Vagrantfile
-              run: >
+              run: |
                 ssh $SSH_USER@$SSH_HOST
+                -i ~/.ssh/minitwit.key -o StrictHostKeyChecking=no
+                './deploy.sh'
+                ssh $SSH_USER@167.71.40.81
                 -i ~/.ssh/minitwit.key -o StrictHostKeyChecking=no
                 './deploy.sh'
               env:

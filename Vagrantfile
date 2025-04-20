@@ -107,9 +107,16 @@ Vagrant.configure("2") do |config|
     server.vm.provision "shell", inline: <<-SHELL
       echo "Creating github user and executing deploy.sh"
 
+      # Create github user and folder
       sudo useradd -m github -g docker
+
+      # Make deploy.sh executable
       chmod +x /home/github/deploy.sh
+      
       # Add the github public keys to ssh file
+      echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPcpMAMTqI/SdcR7dW64FzDYurU+NVezpt2/PBOxwT8z github@minitwit-joel" >> /home/github/.ssh/autorized_keys
+
+      # Execute deploy.sh script
       cd /home/github/
       /home/github/deploy.sh
     SHELL
