@@ -1,19 +1,20 @@
 name: build_and_test
-on: 
+on:
   workflow_dispatch:
-  workflow_call: 
+  workflow_call:
   push:
-    branches: [ main, develop ]
+    branches: [main]
   pull_request:
-    branches: [ main, develop ]
+    branches: [main]
 
 jobs:
   shellcheck:
     runs-on: ubuntu-latest
+    environment: local_appsettings
     steps:
-    - uses: actions/checkout@v4
-    - name: ShellCheck
-      uses: ludeeus/action-shellcheck@2.0.0
+      - uses: actions/checkout@v4
+      - name: ShellCheck
+        uses: ludeeus/action-shellcheck@2.0.0
 
   kicks:
     runs-on: ubuntu-latest
@@ -23,10 +24,10 @@ jobs:
       - name: run kics Scan
         uses: checkmarx/kics-github-action@v2.1.6
         with:
-          path: 'docker-compose.yaml,src/minitwit.Api/Dockerfile,src/minitwit.Web/Dockerfile'
+          path: "docker-compose.yaml,src/minitwit.Api/Dockerfile,src/minitwit.Web/Dockerfile"
           # The degree of severity can be sat by the following line
           fail_on: high,medium
-          exclude_queries: '693, 400, 250'
+          exclude_queries: "693, 400, 250"
           output_path: kicksResults/
           output_formats: json
       # Display the results in json format
@@ -47,36 +48,6 @@ jobs:
        - name: Run static analysis on C#
          run: dotnet build src/minitwit.Api --no-restore /p:RunAnalyzers=true /warnaserror
 
-  build_and_test_NET:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 8.0.*
-    - name: Restore dependencies .NET
-      run: dotnet restore src/minitwit.Api
-    - name: Build .NET
-      run: dotnet build src/minitwit.Api --no-restore
-   # - name: Test .NET
-   #   run: dotnet test tests/minitwit.tests --no-build --verbosity normal
-
-  build_and_test_web:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20.x'
-      - name: Install dependencies for web
-        working-directory: src/minitwit.Web
-        run: npm i
-      - name: Build web
-        working-directory: src/minitwit.Web
-        run: npm run build --if-present
-
   build_and_analyze:
     runs-on: ubuntu-latest
     steps:
@@ -84,7 +55,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version: "20.x"
       - name: Install dependencies for web
         working-directory: src/minitwit.Web
         run: npm i
@@ -94,3 +65,50 @@ jobs:
       - name: Run ESLint
         working-directory: src/minitwit.Web
         run: npm run lint
+
+  build_and_test_NET:
+    runs-on: ubuntu-latest
+    environment: local_appsettings
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.0.*
+
+      - name: Restore dependencies .NET
+        run: dotnet restore
+
+      - name: Build .NET
+        run: dotnet build src/minitwit.Api --no-restore
+
+      - name: Restore .NET tools
+        run: dotnet tool restore
+
+      #- name: Install Playwright Browsers
+      # run: npx playwright install
+
+      - name: Test .NET
+        env:
+          SimApiAccess__Key: ${{ secrets.SIM_API_KEY }}
+          Token__Key: ${{ secrets.TOKEN__KEY }}
+          Token__Issuer: ${{ secrets.TOKEN__ISSUER }}
+          Token__Audience: ${{ secrets.TOKEN__AUDIENCE }}
+          ConnectionStrings__DefaultConnection: ${{ secrets.CONNECTIONSTRINGS__DEFAULTCONNECTION }}
+        run: dotnet test --verbosity normal
+
+  build_and_test_web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+      - name: Install dependencies for web
+        working-directory: src/minitwit.Web
+        run: npm i
+      - name: Build web
+        working-directory: src/minitwit.Web
+        run: npm run build --if-present

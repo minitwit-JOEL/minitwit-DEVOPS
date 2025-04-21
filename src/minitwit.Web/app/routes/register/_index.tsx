@@ -50,6 +50,7 @@ export const action: ActionFunction = async ({ request }) => {
     body: JSON.stringify(registerRequestDto),
   });
 
+
   if (!response.ok) {
     const responseData: Error  = await response.json();
     return json({ message: responseData.error_msg });
@@ -57,6 +58,7 @@ export const action: ActionFunction = async ({ request }) => {
 
   return redirect("/login");
 };
+
 
 export default function SignUp() {
   const actionData = useActionData<ActionData>();
