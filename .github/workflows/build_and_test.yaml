@@ -32,20 +32,21 @@ jobs:
           output_formats: json
       # Display the results in json format
       - name: display kics results
-        run: cat kicksResults/results.json || echo "No results found"
-
-  # analyze_dotnet:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - name: Setup .NET
-  #       uses: actions/setup-dotnet@v3
-  #       with:
-  #         dotnet-version: '8.0.*'
-  #     - name: Restore dependencies for .NET
-  #       run: dotnet restore src/minitwit.Api
-  #     - name: Run static analysis on C#
-  #       run: dotnet build src/minitwit.Api --no-restore /p:RunAnalyzers=true /warnaserror
+        run:
+          cat kicksResults/results.json || echo "No results found"
+    
+  dotnet:
+     runs-on: ubuntu-latest
+     steps:
+       - uses: actions/checkout@v4
+       - name: Setup .NET
+         uses: actions/setup-dotnet@v3
+         with:
+           dotnet-version: '8.0.*'
+       - name: Restore dependencies for .NET
+         run: dotnet restore src/minitwit.Api
+       - name: Run static analysis on C#
+         run: dotnet build src/minitwit.Api --no-restore /p:RunAnalyzers=true /warnaserror
 
   build_and_analyze:
     runs-on: ubuntu-latest

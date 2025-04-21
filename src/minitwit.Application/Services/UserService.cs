@@ -25,6 +25,6 @@ public class UserService : IUserService
 
     public async Task<User?> GetUserByUsernameAsync(string username)
     {
-        return await _dbContext.Users.SingleOrDefaultAsync(u => u.Username == username);
+        return await _dbContext.Users.SingleOrDefaultAsync(u => u!.Username == username);
     }
 }

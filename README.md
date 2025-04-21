@@ -120,3 +120,15 @@ Then execute the following command:
 ```sh
 /home/github/./deploy.sh
 ```
+
+# Maintainablility
+
+## CodeClimate
+
+The maintainablity score reported by CodeClimate can be found here:
+
+<a href="https://codeclimate.com/github/minitwit-JOEL/minitwit-DEVOPS/maintainability"><img src="https://api.codeclimate.com/v1/badges/1a8ebed837410df38623/maintainability" /></a>
+
+The maintanbility score reported by SonarQube can be found here:
+
+<https://sonarcloud.io/summary/overall?id=minitwit-JOEL_minitwit-DEVOPS&branch=main>

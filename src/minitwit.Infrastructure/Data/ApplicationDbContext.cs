@@ -5,7 +5,7 @@ namespace minitwit.Infrastructure.Data;
 
 public class ApplicationDbContext : DbContext
 {
-    public DbSet<User?> Users { get; set; }
+    public DbSet<User> Users { get; set; }
     public DbSet<Message> Messages { get; set; }
     public DbSet<Follow> Followers { get; set; }
 
