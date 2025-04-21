@@ -30,8 +30,4 @@
     <Using Include="Xunit" />
   </ItemGroup>
 
-  <ItemGroup>
-    <InternalsVisibleTo Include="Program" />
-  </ItemGroup>
-
 </Project>
