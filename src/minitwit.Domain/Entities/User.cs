@@ -3,11 +3,11 @@ namespace minitwit.Domain.Entities;
 public class User
 {
     public int Id { get; set; }
-    public string Username { get; set; } = default!;
-    public string Email { get; set; } = default!;
-    public string PasswordHash { get; set; } = default!;
+    public required string Username { get; init; }
+    public required string Email { get; init; }
+    public required string PasswordHash { get; init; }
     
-    public string Salt { get; set; } = default!;
+    public required string Salt { get; init; }
     
     public virtual ICollection<User> Follows { get; set; } = new List<User>();
 }
