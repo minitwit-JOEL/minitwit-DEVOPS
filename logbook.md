@@ -194,3 +194,45 @@ We then made a minimal dashboard that displays very basic information about the 
 
 ### Chore: Getting linters to work
 
+
+## Week 10
+
+### chore/Testing
+
+
+## Week 11
+
+### chore/Vagrant
+
+In order to getting vagrant to work on wsl, the following enviroment variable must be set in the unix enviroment:
+
+```export VAGRANT_WSL_ENABLE_WINDOWS_ACCESS="1"```
+
+Also when running the script we got the following error:
+
+```sh
+web-droplet-0: docker: Error response from daemon: failed to create task for container: failed to create shim task: OCI runtime create failed: runc create failed: unable to start container process: error during container init: error mounting "/root/prometheus/prometheus.yml" to rootfs at "/etc/prometheus/prometheus.yml": create mountpoint for /etc/prometheus/prometheus.yml mount: cannot create subdirectories in "/var/lib/docker/overlay2/930bb965980a3b024fca1f8588e9361b6c4444b17cc56b9636381e11a49d4bb9/merged/etc/prometheus/prometheus.yml": not a directory: unknown: Are you trying to mount a directory onto a file (or vice-versa)? Check if the specified host path exists and is the expected type
+```
+
+This was due to Vagrant not being able to copy folders and their content recursively when using the file provision configuration, and instead what should have been files, was created as folders.
+To solve this we manually provision each file explicitly with the file provision configuration.
+Before this could work, we needed to ssh into the server and manually delete the existing folders that should have been files.
+
+Also note that the files are neither copied into the root- or vagrant user folder, but the github folder, since this is the folder that github will ssh into and re-deploy in.
+
+Before the vagrant file can be used to provision a new VM, it is necesarry to allow traffic from the new droplet to the database. Otherwise the deploy.sh script is stuck in an endless while loop.
+
+We can add / edit an exisitng firewall by using the digital ocean Command Line Interface (doctl), before we execute the deploy.sh script.
+
+We also got the following error when running ```sh vagrant up``` or ```sh vagrant rebuild``` we got the following error:
+
+```sh
+web-droplet-0: Reading package lists...
+web-droplet-0: E: Could not get lock /var/lib/dpkg/lock-frontend. It is held by process 2274 (apt-get)
+web-droplet-0: E: Unable to acquire the dpkg frontend lock (/var/lib/dpkg/lock-frontend), is another process using it?
+```
+
+We solved this by checking if the apt-get lock or dpkg lock is free, each time before we use it.
+
+Please note: Sometimes we still have a race condition, where even though we just checked, the lock are not free when we try to aquire it.
+In this case it should be sufficient to re-run the vagrantfile.

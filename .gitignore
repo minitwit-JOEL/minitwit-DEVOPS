@@ -236,4 +236,7 @@ appsettings.json
 # Optionally, uncomment the following line if you want to ignore the default appsettings.json as well
 # appsettings.json
 
+.vagrant/
+
 .secrets
+.secrets-*
