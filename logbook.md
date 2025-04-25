@@ -270,7 +270,7 @@ fail: Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddleware[1]
 We recognized that the error was due to the JWT-token missing, which should have been specified in the github enviroment variables.
 It was clear that the build_and_test on the pull request on which the new build_and_test workflow was created, did not fail 
 and was deployed under the local_appsettings.
-We therefor hypothezied that the scripts did not have access to the correct enviorment containing the variables.
+We therefor hypothesized that the scripts did not have access to the correct enviorment containing the variables, as well as the actual variables.
 
 This was resolved by specifying the enviorment in both ```deploy.yaml``` and ```release.yaml```.
 
@@ -279,4 +279,8 @@ deploy:
         needs: ["tests"]
         runs-on: ubuntu-latest
         environment: local_appsettings
+        env:
+          Token__Key: ${{ secrets.TOKEN__KEY }}
+          Token__Issuer: ${{ secrets.TOKEN__ISSUER }}
+          Token__Audience: ${{ secrets.TOKEN__AUDIENCE }}
 ```

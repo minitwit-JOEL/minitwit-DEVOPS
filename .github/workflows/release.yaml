@@ -15,7 +15,10 @@ jobs:
     environment: local_appsettings
     env:
       DOTNET_ROOT: /home/runner/.dotnet
-      
+      Token__Key: ${{ secrets.TOKEN__KEY }}
+      Token__Issuer: ${{ secrets.TOKEN__ISSUER }}
+      Token__Audience: ${{ secrets.TOKEN__AUDIENCE }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
