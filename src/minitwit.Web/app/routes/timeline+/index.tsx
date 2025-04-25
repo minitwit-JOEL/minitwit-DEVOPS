@@ -6,29 +6,28 @@ import {
 } from "@remix-run/node";
 import { useLoaderData, Form } from "@remix-run/react";
 import { UserDto } from "~/types/UserDto";
-import { Message } from "~/types/Message";
 import Feed from "~/routes/timeline+/component/feed";
 import { getUserSession } from "~/util/session.server";
+import Pagination from "~/routes/components/pagination";
+import {PaginationResponse} from "~/types/PaginationResponse";
 
 export interface LoaderData {
   currentUser?: UserDto;
-  messagesResponse: messageReponse;
-}
-
-interface messageReponse {
-  id: number;
-  twits: Message[];
+  pagination: PaginationResponse;
 }
 
 export const loader: LoaderFunction = async ({ request }) => {
   const session = await getUserSession(request);
   const token = session.get("token");
-  
+
   if (!token) {
     return redirect("/login");
   }
-  
-  const messagesResponse = await fetch(`${process.env.API_BASE_URL}api/twit/feed?page=0`, {
+
+  const url = new URL(request.url);
+  const page = Number(url.searchParams.get("page") || "0");
+
+  const messagesResponse = await fetch(`${process.env.API_BASE_URL}api/twit/feed?page=${page}`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -46,7 +45,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 
   return json({
     currentUser: userResponse.ok ? await userResponse.json() : null,
-    messagesResponse: await messagesResponse.json(),
+    pagination: await messagesResponse.json(),
   });
 };
 
@@ -81,7 +80,7 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function Timeline() {
-  const { currentUser, messagesResponse } = useLoaderData<LoaderData>();
+  const { currentUser, pagination } = useLoaderData<LoaderData>();
 
   return (
     <div>
@@ -98,7 +97,9 @@ export default function Timeline() {
         </div>
       )}
 
-      <Feed messages={messagesResponse.twits} />
+      <Feed messages={pagination.data} />
+
+      <Pagination currentPage={pagination.pagination.currentPage} totalPages={pagination.pagination.totalPages} />
     </div>
   );
 }

@@ -106,9 +106,17 @@ public class TwitsService : ITwitsService
         return newMessage;
     }
 
-    public async Task<PaginationData> GetPaginationResponse(int page)
+    public async Task<PaginationData> GetPaginationResponse(int page, int? userId = null)
     {
-        var total = await _dbContext.Messages.CountAsync();
+        var total = 0;
+        if (userId is null)
+        {
+            total = await _dbContext.Messages.CountAsync();
+        }
+        else
+        {
+            total = await _dbContext.Messages.Where(u => u.AuthorId == userId).CountAsync();
+        }
 
         return new PaginationData
         {
