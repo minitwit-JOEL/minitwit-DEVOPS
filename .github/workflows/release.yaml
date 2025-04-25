@@ -8,17 +8,18 @@ on:
 jobs:
   tests:
     uses: ./.github/workflows/build_and_test.yaml
+    secrets:
+      Token__Key: ${{ secrets.TOKEN__KEY }}
+      Token__Issuer: ${{ secrets.TOKEN__ISSUER }}
+      Token__Audience: ${{ secrets.TOKEN__AUDIENCE }}
+      ConnectionStrings__DefaultConnection: ${{ secrets.CONNECTIONSTRINGS__DEFAULTCONNECTION }}
+      SimApiAccess__Key: ${{ secrets.SIM_API_KEY }}
 
   release:
     needs: ["tests"]
     runs-on: ubuntu-latest
-    environment: local_appsettings
     env:
       DOTNET_ROOT: /home/runner/.dotnet
-      Token__Key: ${{ secrets.TOKEN__KEY }}
-      Token__Issuer: ${{ secrets.TOKEN__ISSUER }}
-      Token__Audience: ${{ secrets.TOKEN__AUDIENCE }}
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4

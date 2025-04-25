@@ -2,6 +2,17 @@ name: build_and_test
 on:
   workflow_dispatch:
   workflow_call:
+    secrets:
+      Token__Key:
+        required: true
+      Token__Issuer:
+        required: true
+      Token__Audience:
+        required: true
+      SimApiAccess__Key:
+        required: true
+      ConnectionStrings__DefaultConnection:
+        required: true  
   push:
     branches: [main]
   pull_request:
@@ -69,6 +80,7 @@ jobs:
   build_and_test_NET:
     runs-on: ubuntu-latest
     environment: local_appsettings
+      
     steps:
       - uses: actions/checkout@v4
 
