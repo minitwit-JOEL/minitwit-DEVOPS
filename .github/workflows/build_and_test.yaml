@@ -89,6 +89,12 @@ jobs:
       #- name: Install Playwright Browsers
       # run: npx playwright install
 
+      - name: Print JWT Key Length
+        run: |
+          echo "Key length: ${#Token__Key}"
+        env:
+          Token__Key: ${{ secrets.TOKEN__KEY }}
+
       - name: Test .NET
         env:
           SimApiAccess__Key: ${{ secrets.SIM_API_KEY }}
