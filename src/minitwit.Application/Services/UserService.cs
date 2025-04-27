@@ -18,9 +18,9 @@ public class UserService : IUserService
         return await _dbContext.Users.FindAsync(userId);
     }
 
-    public Task<User> GetUserByIdAsync(int userId)
+    public async Task<User?> GetUserByIdAsync(int userId)
     {
-        throw new NotImplementedException();
+        return await _dbContext.Users.SingleOrDefaultAsync(u => u.Id == userId);
     }
 
     public async Task<User?> GetUserByUsernameAsync(string username)
