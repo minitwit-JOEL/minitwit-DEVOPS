@@ -44,16 +44,13 @@ public class AuthServiceSimTests
             username: "user1",
             email: "user1@example.com",
             password: "pwd1");
+        var action = _context.ProcessedActions.Single();
+        var user = _context.Users.Single(u => u.Username == "user1");
 
         // Assert
         Assert.True(result.IsSuccess);
         Assert.Equal(string.Empty, result.ErrorMessage);
-
-        var user = _context.Users.Single(u => u.Username == "user1");
         Assert.Equal("user1@example.com", user.Email);
-
-        // ProcessedAction
-        var action = _context.ProcessedActions.Single();
         Assert.Equal(42, action.ProcessId);
     }
 
@@ -74,14 +71,12 @@ public class AuthServiceSimTests
             username: username,
             email: email,
             password: password);
+        var action = _context.ProcessedActions.Single();
 
         // Assert
         Assert.False(result.IsSuccess);
         Assert.Equal(expectedError, result.ErrorMessage);
         Assert.Empty(_context.Users.Where(u => u.Username == username));
-            
-        // ProcessedAction
-        var action = _context.ProcessedActions.Single();
         Assert.Equal(100, action.ProcessId);
     }
 
@@ -98,14 +93,12 @@ public class AuthServiceSimTests
             username: "dup",
             email: "dup2@e.com",
             password: "pwd");
+        var action = _context.ProcessedActions.Single();
 
         // Assert
         Assert.False(result.IsSuccess);
         Assert.Equal("The username is already taken", result.ErrorMessage);
         Assert.Equal(1, _context.Users.Count(u => u.Username == "dup"));
-            
-        // ProcessedAction
-        var action = _context.ProcessedActions.Single();
         Assert.Equal(7, action.ProcessId);
     }
 }
