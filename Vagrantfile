@@ -80,6 +80,7 @@ Vagrant.configure("2") do |config|
     server.vm.provision "shell", env: { "DIGITAL_OCEAN_TOKEN" => ENV["DIGITAL_OCEAN_TOKEN"] }, inline: <<-SHELL
       echo "Configuring firewall"
 
+      # Setup doctl
       curl -sL https://github.com/digitalocean/doctl/releases/download/v1.105.0/doctl-1.105.0-linux-amd64.tar.gz | tar -xz
       mv doctl /usr/local/bin
 
