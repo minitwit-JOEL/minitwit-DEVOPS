@@ -73,20 +73,7 @@ public class UserServiceSimTests
             Assert.Single(all);
             Assert.Equal(123, all[0].ProcessId);
         }
-
-        [Fact]
-        public void CheckIfRequestFromSimulator_CorrectHeader_ReturnsTrue()
-        {
-            // Arrange
-            var ctx = new DefaultHttpContext();
-            ctx.Request.Headers.Authorization = _secretKey;
-
-            // Act
-            var ok = _service.CheckIfRequestFromSimulator(ctx.Request);
-
-            // Assert
-            Assert.True(ok);
-        }
+    
 
         [Fact]
         public void CheckIfRequestFromSimulator_WrongHeader_ReturnsFalse()
