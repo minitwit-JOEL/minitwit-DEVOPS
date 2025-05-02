@@ -53,7 +53,7 @@ This is equivalent to the "depends on" attribute in the docker compose file.
 
 We also encountered a problem, that when the API tried to apply migrations to the database, and thereby connection, we recieved an error, which starts with the top of the following stack trace:
 
-```
+```text
 Unhandled exception. System.Net.Sockets.SocketException (00000001, 11): Resource temporarily unavailable
    at System.Net.Dns.GetHostEntryOrAddressesCore(String hostName, Boolean justAddresses, AddressFamily addressFamily, Nullable`1 startingTimestamp)
    at System.Net.Dns.GetHostAddresses(String hostNameOrAddress, AddressFamily family)
@@ -210,7 +210,7 @@ In order to getting vagrant to work on wsl, the following enviroment variable mu
 
 Also when running the script we got the following error:
 
-```sh
+```text
 web-droplet-0: docker: Error response from daemon: failed to create task for container: failed to create shim task: OCI runtime create failed: runc create failed: unable to start container process: error during container init: error mounting "/root/prometheus/prometheus.yml" to rootfs at "/etc/prometheus/prometheus.yml": create mountpoint for /etc/prometheus/prometheus.yml mount: cannot create subdirectories in "/var/lib/docker/overlay2/930bb965980a3b024fca1f8588e9361b6c4444b17cc56b9636381e11a49d4bb9/merged/etc/prometheus/prometheus.yml": not a directory: unknown: Are you trying to mount a directory onto a file (or vice-versa)? Check if the specified host path exists and is the expected type
 ```
 
@@ -303,3 +303,48 @@ web-droplet-0:   % Total    % Received % Xferd  Average Speed   Time    Time    
 ```
 
 We discovered that the connection string in the enviroment file, did not have the correct ip as the host.
+### Deploy and relase workflows fails after new build_and_test workflow are merged into main
+
+The workflow build_and_test both required by the deploy and release workflow, failed on main when triggered by both workflows.
+We got the following error:
+
+```text
+fail: Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddleware[1]
+      An unhandled exception has occurred while executing the request.
+      System.ArgumentNullException: Value cannot be null. (Parameter 's')
+         at System.ArgumentNullException.Throw(String paramName)
+         at System.Text.Encoding.GetBytes(String s)
+         at Program.<>c__DisplayClass0_0.<<Main>$>b__4(JwtBearerOptions options) in /home/runner/work/minitwit-DEVOPS/minitwit-DEVOPS/src/minitwit.Api/Program.cs:line 83
+         at Microsoft.Extensions.Options.ConfigureNamedOptions`1.Configure(String name, TOptions options)
+         at Microsoft.Extensions.Options.OptionsFactory`1.Create(String name)
+         at Microsoft.Extensions.Options.OptionsMonitor`1.<>c.<Get>b__10_0(String name, IOptionsFactory`1 factory)
+         at Microsoft.Extensions.Options.OptionsCache`1.<>c__DisplayClass3_1`1.<GetOrAdd>b__2()
+         at System.Lazy`1.ViaFactory(LazyThreadSafetyMode mode)
+         at System.Lazy`1.ExecutionAndPublication(LazyHelper executionAndPublication, Boolean useDefaultConstructor)
+         at System.Lazy`1.CreateValue()
+         at Microsoft.Extensions.Options.OptionsCache`1.GetOrAdd[TArg](String name, Func`3 createOptions, TArg factoryArgument)
+         at Microsoft.Extensions.Options.OptionsMonitor`1.Get(String name)
+         at Microsoft.AspNetCore.Authentication.AuthenticationHandler`1.InitializeAsync(AuthenticationScheme scheme, HttpContext context)
+         at Microsoft.AspNetCore.Authentication.AuthenticationHandlerProvider.GetHandlerAsync(HttpContext context, String authenticationScheme)
+         at Microsoft.AspNetCore.Authentication.AuthenticationService.AuthenticateAsync(HttpContext context, String scheme)
+         at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+         at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+```
+
+We recognized that the error was due to the JWT-token missing, which should have been specified in the github enviroment variables.
+It was clear that the build_and_test on the pull request on which the new build_and_test workflow was created, did not fail 
+and was deployed under the local_appsettings.
+We therefor hypothesized that the scripts did not have access to the correct enviorment containing the variables, as well as the actual variables.
+
+This was resolved by specifying the enviorment in both ```deploy.yaml``` and ```release.yaml```.
+
+```yaml
+deploy: 
+        needs: ["tests"]
+        runs-on: ubuntu-latest
+        environment: local_appsettings
+        env:
+          Token__Key: ${{ secrets.TOKEN__KEY }}
+          Token__Issuer: ${{ secrets.TOKEN__ISSUER }}
+          Token__Audience: ${{ secrets.TOKEN__AUDIENCE }}
+```
