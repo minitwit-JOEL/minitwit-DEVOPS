@@ -25,10 +25,8 @@ public class AuthServiceSimTests
         _context.Database.EnsureCreated();
             
         Util.SeedDatabase(_context);
-        
-        var appSettings = Util.InitConfiguration();
-        
-        var simApiAccess = new SimApiAccess { Key = appSettings.GetSection("SimApiAccess").ToString() };
+
+        var simApiAccess = new SimApiAccess { Key = Environment.GetEnvironmentVariable("SimApiAccess") };
         var opts = Options.Create(simApiAccess);
         var simService = new SimService(_context, opts);
         _service = new AuthService(_context, simService);

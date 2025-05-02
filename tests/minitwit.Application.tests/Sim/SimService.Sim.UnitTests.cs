@@ -24,11 +24,8 @@ public class UserServiceSimTests
 
         _context.Database.EnsureDeleted();
         _context.Database.EnsureCreated();
-            
-        
 
-        var appSettings = Util.InitConfiguration();
-        var key = appSettings.GetSection("SimApiAccess").ToString();
+        var key = Environment.GetEnvironmentVariable("SimApiAccess");
         _secretKey = key!;
         var simApiAccess = new SimApiAccess { Key = key };
         var opts = Options.Create(simApiAccess);
