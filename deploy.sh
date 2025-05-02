@@ -4,7 +4,7 @@ docker image pull lukan707/minitwit-joel-web:latest
 docker image pull prom/prometheus:latest
 docker image pull grafana/grafana:10.2.4
 
-SWARM_IP=$(ip -4 addr show $(ip route show default | awk '/default/ {print $5}') | awk '/inet / {print $2}' | cut -d/ -f1 | head -1 )
+SWARM_IP="$(ip -4 addr show $(ip route show default | awk '/default/ {print $5}') | awk '/inet / {print $2}' | cut -d/ -f1 | head -1 )"
 
 echo "The IP of the swarm is: $SWARM_IP"
 
@@ -17,7 +17,7 @@ fi
 
 if ! docker node inspect self --format '{{ .ManagerStatus.Leader }}'; then
     echo "Starting docker swarm"
-    docker swarm init --advertise-addr $SWARM_IP:2377 
+    docker swarm init --advertise-addr "$SWARM_IP:2377"
 fi
 
 docker network create minitwit-network \
@@ -54,7 +54,7 @@ docker service create \
     --env-file $ENV_FILE \
     lukan707/minitwit-joel-api:latest
 
-until curl -f http://$SWARM_IP:8080/api/sim/latest; do
+until curl -f "http://$SWARM_IP:8080/api/sim/latest"; do
     sleep 1
     echo 'Minitwit API is not ready'
 done

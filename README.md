@@ -74,10 +74,16 @@ When it is ensured that the secrets file is in place,
 the containers can be brought up by running the following command in the root directory of the project:
 
 ```sh
-/.deploy.sh --local
+./deploy.sh --local
 ```
 
-Please note, that this action does not rebuild the containers from the local enviroment, but pulls the latest containers from the Docker Hub repository.
+Please note, that this action does not rebuild the containers from the local enviroment, but pulls the latest containers from the Docker Hub repository.¨
+
+The swarm will be running in the background, and can be brought down by running the following script:
+
+```sh
+./teardown.sh
+```
 
 # Provisioning the web droplet (VM) with Vagrant
 
