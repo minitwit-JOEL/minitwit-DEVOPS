@@ -11,14 +11,15 @@ import {
 } from "@remix-run/react";
 import Feed from "~/routes/timeline+/component/feed";
 import { UserDto } from "~/types/UserDto";
-import { Message } from "~/types/Message";
 import { useEffect, useState } from "react";
+import Pagination from "~/routes/components/pagination";
+import {PaginationResponse} from "~/types/PaginationResponse";
 
 export interface LoaderData {
   profileUser?: UserDto;
   currentUser?: UserDto;
   followed?: boolean;
-  messages: Message[];
+  pagination: PaginationResponse;
 }
 
 export interface ActionData {
@@ -27,6 +28,8 @@ export interface ActionData {
 
 export const loader: LoaderFunction = async ({ request, params }) => {
   const { username } = params;
+  const url = new URL(request.url);
+  const page = Number(url.searchParams.get("page") || "0");
 
   const session = await getUserSession(request);
   const token = session.get("token");
@@ -36,7 +39,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   }
 
   const messagesResponse = await fetch(
-    `${process.env.API_BASE_URL}api/twit/user/${username}?page=0`,
+    `${process.env.API_BASE_URL}api/twit/user/${username}?page=${page}`,
     {
       method: "GET",
       headers: {
@@ -80,7 +83,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     profileUser: await profileUserResponse.json(),
     currentUser: await userResponse.json(),
     followed: await followResponse.json(),
-    messages: await messagesResponse.json(),
+    pagination: await messagesResponse.json(),
   });
 };
 
@@ -135,7 +138,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 };
 
 export default function UserPage() {
-  const { profileUser, currentUser, followed, messages } =
+  const { profileUser, currentUser, followed, pagination } =
     useLoaderData<LoaderData>();
   const [isFollowed, setIsFollowed] = useState(followed);
   const followFetcher = useFetcher<ActionData>();
@@ -184,7 +187,8 @@ export default function UserPage() {
         </div>
       )}
 
-      <Feed messages={messages} />
+      <Feed messages={pagination.data} />
+      <Pagination currentPage={pagination.pagination.currentPage} totalPages={pagination.pagination.totalPages} />
     </div>
   );
 }
