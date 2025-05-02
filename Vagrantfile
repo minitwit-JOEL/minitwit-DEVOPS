@@ -121,8 +121,11 @@ Vagrant.configure("2") do |config|
       # Make deploy.sh executable
       chmod +x /home/github/deploy.sh
       
+      # Create folder for ssh keys
+      mkdir /home/github/.ssh
+      
       # Add the github public keys to ssh file
-      echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPcpMAMTqI/SdcR7dW64FzDYurU+NVezpt2/PBOxwT8z github@minitwit-joel" >> /home/github/.ssh/autorized_keys
+      echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCuLqTUDVtnlwFjlLq1pSCvLjvyOPqJ371f+YPrjHTMmx3P/GaVd6AIvbkIYnOfMJ+HlNjX22YACAugPxNa3DZFqe8NdcnfY4B7IWgAQEorYdJdPKTNVOCpIO22usRahi2oMmWsGcoaTK8qismXWNLjNaaVzXWkhuNXcpxFxtdbNzegp5/pBVkLkG+rO1eIrgp0ewxMqEpbTAa6FjmNFiHJKENenbzN2BDgzzwq6LAxdxNmE6k48qgSxSLKaRAg2AD4usWV1VQURfL+G0l7M5/bxQQvpPzPcqrUlxGwDA+St2VpWHIe+Fc0NeMTiW3X8sNmk6ti8DUqfGHMKd8RqOPlDmzL4UhT2vS3E5lrF/8t2xI+AvBoF/mhUMapaNPOV75AeggNu95o1XpTKZwGrKKkXNbQHqxMZ8mLFUOOQsaYzbtIa2pABpjK6DhlymYq/HT+BNOzhzOvIc6pHXRK6Q4jhGIitw3iDhOXw6uFWQf58NZBS5guZZiZUS+16OqWNRk= gmylastname@gmail.com" >> /home/github/.ssh/autorized_keys
 
       # Execute deploy.sh script
       cd /home/github/
