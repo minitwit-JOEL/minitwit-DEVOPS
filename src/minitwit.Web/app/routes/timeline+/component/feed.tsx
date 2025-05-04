@@ -23,7 +23,7 @@ export default function Feed({ messages }: Props) {
               <p>
                 <strong>
                   {author ? (
-                    <Link to={`/user/${username}`}>{username}</Link>
+                    <Link to={`/user/${username}?page=0`}>{username}</Link>
                   ) : (
                     username
                   )}

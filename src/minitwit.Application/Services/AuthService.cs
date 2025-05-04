@@ -1,6 +1,3 @@
-using System.Security.Authentication;
-using System.Security.Cryptography;
-using System.Text;
 using Microsoft.EntityFrameworkCore;
 using minitwit.Application.Interfaces;
 using minitwit.Domain.Entities;
@@ -21,7 +18,7 @@ public class AuthService : IAuthService
     {
         var user = await _dbContext.Users
             .Where(u => u.Username == username)
-            .FirstAsync();
+            .FirstOrDefaultAsync();
         
         if (user == null || !BCrypt.Net.BCrypt.Verify(password + user.Salt, user.PasswordHash))
         {

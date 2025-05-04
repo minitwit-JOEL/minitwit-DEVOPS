@@ -37,19 +37,22 @@ public class TwitsController : ControllerBase
         if (string.IsNullOrEmpty(userId))
         {
             var publicTwits = await _twitsService.GetPublicTimeline(page);
-            return Ok(new
+            var publicPagination = await _twitsService.GetPaginationResponse(page);
+
+            return Ok(new PaginationResponse()
             {
-                id = 0,
-                twits = publicTwits
+                Data = publicTwits,
+                Pagination = publicPagination
             });
         }
 
         var privateTwits = await _twitsService.GetFeed(int.Parse(userId), page);
+        var privatePagination = await _twitsService.GetPaginationResponse(page, int.Parse(userId));
 
-        return Ok(new
+        return Ok(new PaginationResponse()
         {
-            id = 1,
-            twits = privateTwits
+            Data = privateTwits,
+            Pagination = privatePagination
         });
     }
 
@@ -65,8 +68,13 @@ public class TwitsController : ControllerBase
         }
 
         var twits = await _twitsService.GetUsersTwitsByName(authorName, page);
+        var pagination = await _twitsService.GetPaginationResponse(page, int.Parse(userId));
 
-        return Ok(twits);
+        return Ok(new PaginationResponse()
+        {
+            Data = twits,
+            Pagination = pagination
+        });
     }
 
     [Authorize]

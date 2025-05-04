@@ -77,12 +77,13 @@ jobs:
             - name: Deploy to servers
                 # Configure the ~./bash_profile and deploy.sh file on the Vagrantfile
               run: |
-                ssh $SSH_USER@$SSH_HOST
-                -i ~/.ssh/minitwit.key -o StrictHostKeyChecking=no
-                './deploy.sh'
-                ssh $SSH_USER@167.71.40.81
-                -i ~/.ssh/minitwit.key -o StrictHostKeyChecking=no
-                './deploy.sh'
+                ssh -i ~/.ssh/minitwit.key \
+                -o StrictHostKeyChecking=no \
+                -o UserKnownHostsFile=/dev/null \
+                $SSH_USER@$SSH_HOST_2 \
+                "docker service update --image lukan707/minitwit-joel-api:latest minitwit-api; \
+                docker service update --image lukan707/minitwit-joel-web:latest minitwit-web"
               env:
                 SSH_USER: ${{ secrets.SSH_USER }}
+                SSH_HOST_2: ${{ secrets.SSH_HOST_2 }}
                 SSH_HOST: ${{ secrets.SSH_HOST }}

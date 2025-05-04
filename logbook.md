@@ -239,6 +239,70 @@ In this case it should be sufficient to re-run the vagrantfile.
 
 ## Week 12
 
+### Creating a docker swarm
+
+We have decided to create a docker swarm on only one VM.
+This gives us:
+- better avaliability by having several replicas of the api and web server, should one fail of the replicas fails
+  (but not as good as having several manager nodes (requires several VM's) or even also several worker nodes (also requires several VM's))
+- load balancing of each service (docker swarm sets up a load balancer in front of each service)
+- automatically rolling updates
+
+The alternative is having several manager nodes, each on its own VM, and possibly several worker nodes (also each on their own VM).
+
+For now, we deem the demand from the simulator is not requiring several isntances across several VM's.
+Also the price of having minimum 3 VM's, it is recommended to have at least 3 manager nodes and always an odd number, does in light of the current user demand,
+not justify this setup.
+
+We have choosen to modify our existing ```./deploy.sh``` script to create the docker swarm.
+
+While doing so, we met an error when trying to create a service attached to the existing docker network.
+
+The solution was to configure the network as shown below.
+
+```sh
+docker network create minitwit-network \
+    --driver overlay \
+    --attachable \
+```
+The overlay type is the type of network required by a docker swarm. 
+The attachable option, defines that containers outside the swarm, are allowed to attach to the network.
+
+ The script now worked locally, but still not in production.
+
+ We found that the command for determining the public assigned IP, returned two lines with IP addresses, which caused the following error:
+
+ ```sh
+Error response from daemon: This node is not a swarm manager. Use "docker swarm init" or "docker swarm join" to connect this node to swarm and try again.
+Starting docker swarm
+Swarm initialized: current node (p5wghe15ap09hkrm1a1nbub48) is now a manager.
+
+To add a worker to this swarm, run the following command:
+
+    docker swarm join --token SWMTKN-1-3a15tf1eq4koqy3a7x4n3t4olh8a225mhykpeh5z0kemx31psg-81nwajce6x188q786byxtpd4g 127.0.0.1:2377
+ ```
+
+The fix was to adjust the command, by piping ```sh head -1 ``` at the end, so we only got the first returned.
+
+We also encountered a situation where the api endpoints where never determined ready, and the deploy script was stuck in an endless loop:
+
+```sh
+web-droplet-0:   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+    web-droplet-0:                                  Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+    web-droplet-0: curl: (7) Failed to connect to 167.71.40.81 port 8080 after 2 ms: Connection refused
+    web-droplet-0: Minitwit API is not ready
+    web-droplet-0:   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+    web-droplet-0:                                  Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+    web-droplet-0: curl: (7) Failed to connect to 167.71.40.81 port 8080 after 3 ms: Connection refused
+    web-droplet-0: Minitwit API is not ready
+    web-droplet-0:   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+    web-droplet-0:                                  Dload  Upload   Total   Spent    Left  Speed
+100    19    0    19    0     0     39      0 --:--:-- --:--:-- --:--:--    40
+```
+
+We discovered that the connection string in the enviroment file, did not have the correct ip as the host.
 ### Deploy and relase workflows fails after new build_and_test workflow are merged into main
 
 The workflow build_and_test both required by the deploy and release workflow, failed on main when triggered by both workflows.
