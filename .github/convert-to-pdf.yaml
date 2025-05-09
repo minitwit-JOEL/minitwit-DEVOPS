@@ -4,24 +4,38 @@ on:
   push:
     branches:
       - main
-    # Only trigger actions can be used to only trigger 
+    # Actions triggers only if changes are made in the specified paths
     paths:
-      - 'documents/**.md'
-      - 'documents/images/**'
+      - 'report/**.md'
+      - 'report/images/**'
 
 jobs:
   converttopdf:
-    name: Build PDF
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: baileyjm02/markdown-to-pdf@v1
+      - name: Checkout
+      - uses: actions/checkout@
+      
+      - name: Install Pandoc
+        run: sudo apt-get update && sudo apt-get install -y Pandoc
+
+      - name: Ensure output dir is created
+        run: mkdir -p output
+
+      # The merging are performed in alphabetic order
+      - name: Merge markdown files
+      - uses: docker://pandoc/latex:3.6.4
         with:
-          input_dir: documents
-          output_dir: /
-          images_dir: docs/images
-          build_html: false
-      - uses: action/upload-artifact@v3
+          args: "report/*.md -o report/build/BSc_group_f.md"
+
+      - name: Convert to PDF
+      - uses: docker://pandoc/latex:3.6.4
         with:
-          name: documents
-          path: /
+          args: "report/build/BSc_group_f.md -o report/build/BSc_group_f.pdf"
+
+      - name: Upload PDF as a artifact
+      - uses: actions/upload-artifact@v4
+        with:
+          name: BSc_group_f
+          path: report/build/BSc_group_f.pdf
