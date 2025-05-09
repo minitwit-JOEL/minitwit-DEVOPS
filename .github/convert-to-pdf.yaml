@@ -1,0 +1,27 @@
+name: Docs to PDF
+
+on:
+  push:
+    branches:
+      - main
+    # Only trigger actions can be used to only trigger 
+    paths:
+      - 'documents/**.md'
+      - 'documents/images/**'
+
+jobs:
+  converttopdf:
+    name: Build PDF
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: baileyjm02/markdown-to-pdf@v1
+        with:
+          input_dir: documents
+          output_dir: /
+          images_dir: docs/images
+          build_html: false
+      - uses: action/upload-artifact@v3
+        with:
+          name: documents
+          path: /

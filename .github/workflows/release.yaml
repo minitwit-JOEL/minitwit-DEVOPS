@@ -91,4 +91,5 @@ jobs:
           files: |
             ${{ github.workspace }}/minitwit.Api/minitwit-*.zip
             ${{ github.workspace }}/minitwit.Web/minitwit-web-*.zip
+            ${{ github.workspace }}/
       

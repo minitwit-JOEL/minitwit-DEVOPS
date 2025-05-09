@@ -21,7 +21,7 @@ It should have the following structure, and reside on the path ```src/minitwit.A
     "DefaultConnection": ""
   },
   "Token": {
-    "Key": "",J
+    "Key": "",
     "Issuer": "",
     "Audience": ""
   },
