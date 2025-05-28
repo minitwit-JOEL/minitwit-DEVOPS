@@ -44,7 +44,7 @@
                 <mxCell id="18" value="&lt;&lt;docker swarm&gt;&gt;" style="swimlane;" vertex="1" parent="3">
                     <mxGeometry x="20" y="55" width="460" height="255" as="geometry"/>
                 </mxCell>
-                <mxCell id="19" value="«Service»&lt;br&gt;&lt;b&gt;Web application&lt;/b&gt;" style="html=1;dropTarget=0;whiteSpace=wrap;" vertex="1" parent="18">
+                <mxCell id="19" value="«Service»&lt;div&gt;&lt;font color=&quot;#000000&quot;&gt;(2 replicas)&lt;br&gt;&lt;/font&gt;&lt;b&gt;Web application&lt;/b&gt;&lt;/div&gt;" style="html=1;dropTarget=0;whiteSpace=wrap;" vertex="1" parent="18">
                     <mxGeometry x="20" y="145" width="180" height="90" as="geometry"/>
                 </mxCell>
                 <mxCell id="20" value="" style="shape=module;jettyWidth=8;jettyHeight=4;" vertex="1" parent="19">
@@ -52,7 +52,7 @@
                         <mxPoint x="-27" y="7" as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="41" value="«Service»&lt;br&gt;&lt;b&gt;API application&lt;/b&gt;" style="html=1;dropTarget=0;whiteSpace=wrap;" vertex="1" parent="18">
+                <mxCell id="41" value="«Service»&lt;div&gt;&lt;font color=&quot;#000000&quot;&gt;(5 replicas)&lt;br&gt;&lt;/font&gt;&lt;b&gt;API application&lt;/b&gt;&lt;/div&gt;" style="html=1;dropTarget=0;whiteSpace=wrap;" vertex="1" parent="18">
                     <mxGeometry x="260" y="145" width="180" height="90" as="geometry"/>
                 </mxCell>
                 <mxCell id="42" value="" style="shape=module;jettyWidth=8;jettyHeight=4;" vertex="1" parent="41">
