@@ -35,6 +35,9 @@ jobs:
           name: BSc_group_f
           path: report/build/BSc_group_f.pdf
 
+      - name: Configure Git for GitHub token auth
+        run: git config --global url."https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/".insteadOf "https://github.com/"
+
       - name: Commit report
         run: |
           git config user.name "github-actions[bot]"
