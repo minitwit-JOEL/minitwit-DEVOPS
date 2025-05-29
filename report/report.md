@@ -4,7 +4,7 @@ Authors: \
 Edward Rostomian - edwr@itu.dk \
 Jerome Andersen Rahal - jrah@itu.dk \
 Lukas Andersson - lukan@itu.dk \
-Olvier Prip Hagmund - ohag@itu.dk
+Olvier Prip Hartmann - ohag@itu.dk
 
 Course name: Devops, Software Evolution and Software Maintenance \
 Class code: BSDSESM1KU
