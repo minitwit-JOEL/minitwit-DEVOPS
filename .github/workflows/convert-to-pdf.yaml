@@ -18,13 +18,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install pandoc and latex engine
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pandoc texlive-xetex
+
       - name: Ensure output dir is created
         run: mkdir -p report/build
 
       - name: Convert to PDF
-        uses: docker://pandoc/latex:3.6.4
-        with:
-          args: "bash -c \"pandoc report/report.md -o report/build/BSc_group_f.pdf\""
+        run: pandoc report.md -o build/BSc_group_f.pdf
 
       - name: Upload PDF as a artifact
         uses: actions/upload-artifact@v4
@@ -36,6 +39,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add -f report/build/report.pdf
+          git add -f report/build/BSc_group_f.pdf
           git commit -m "Updated PDF from CI"
           git push
