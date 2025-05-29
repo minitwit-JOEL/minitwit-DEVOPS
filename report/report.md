@@ -9,7 +9,7 @@ Olvier Prip Hagmund - ohag@itu.dk
 Course name: Devops, Software Evolution and Software Maintenance \
 Class code: BSDSESM1KU
 
-May 30th 2025
+May 2025
 
 # System perspective
 
