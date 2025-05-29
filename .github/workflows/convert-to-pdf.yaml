@@ -27,7 +27,7 @@ jobs:
         run: mkdir -p report/build
 
       - name: Convert to PDF
-        run: pandoc report.md -o build/BSc_group_f.pdf
+        run: pandoc report/report.md -o build/BSc_group_f.pdf
 
       - name: Upload PDF as a artifact
         uses: actions/upload-artifact@v4
