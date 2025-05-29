@@ -15,7 +15,7 @@ jobs:
 
     steps:
       - name: Checkout
-      - uses: actions/checkout@
+        uses: actions/checkout@
       
       - name: Install Pandoc
         run: sudo apt-get update && sudo apt-get install -y Pandoc
@@ -25,17 +25,17 @@ jobs:
 
       # The merging are performed in alphabetic order
       - name: Merge markdown files
-      - uses: docker://pandoc/latex:3.6.4
+        uses: docker://pandoc/latex:3.6.4
         with:
           args: "report/*.md -o report/build/BSc_group_f.md"
 
       - name: Convert to PDF
-      - uses: docker://pandoc/latex:3.6.4
+        uses: docker://pandoc/latex:3.6.4
         with:
           args: "report/build/BSc_group_f.md -o report/build/BSc_group_f.pdf"
 
       - name: Upload PDF as a artifact
-      - uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4
         with:
           name: BSc_group_f
           path: report/build/BSc_group_f.pdf
