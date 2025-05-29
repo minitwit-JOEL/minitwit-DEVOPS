@@ -36,7 +36,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: BSc_group_f
-          path: report/build/BSc_group_f.pdf
+          path: |
+            report/build/BSc_group_f.pdf
+            report/images/
 
       - name: Commit report
         run: |
