@@ -92,7 +92,7 @@ jobs:
         shell: bash
         run: |
           tag=$(git describe --tags --abbrev=0 || echo "v0.0.0")
-          7z a -tzip "${{ github.workspace }}/report/build/BSc_group_f-${tag}.zip" "report/build/BSc_group_f.pdf"
+          7z a -tzip "${{ github.workspace }}/report-${tag}.zip" "report/build/BSc_group_f.pdf"
 
       - name: Set Tag
         run: echo "TAG=$(git describe --tags --abbrev=0 || echo 'v0.0.0')" >> $GITHUB_ENV
@@ -104,5 +104,6 @@ jobs:
           files: |
             ${{ github.workspace }}/minitwit.Api/minitwit-*.zip
             ${{ github.workspace }}/minitwit.Web/minitwit-web-*.zip
-            ${{ github.workspace }}/report/build/BSc_group_f-*.zip
+            ${{ github.workspace }}/report-*.zip
+            
 
