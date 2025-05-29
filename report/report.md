@@ -1,12 +1,12 @@
-### System perspective
+## System perspective
 
-## System architechture
-
-
-### Process perspective
+### System architechture
 
 
-### Reflections perspective
+## Process perspective
 
 
-### Appendix
+## Reflections perspective
+
+
+# Appendix
