@@ -24,12 +24,12 @@ jobs:
       - name: Merge markdown files
         uses: docker://pandoc/latex:3.6.4
         with:
-          args: "report/*.md -o report/build/BSc_group_f.md"
+          args: "bash -c 'report/*.md -o report/build/BSc_group_f.md'"
 
       - name: Convert to PDF
         uses: docker://pandoc/latex:3.6.4
         with:
-          args: "report/build/BSc_group_f.md -o report/build/BSc_group_f.pdf"
+          args: "bash -c 'report/build/BSc_group_f.md -o report/build/BSc_group_f.pdf'"
 
       - name: Upload PDF as a artifact
         uses: actions/upload-artifact@v4
